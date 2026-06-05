@@ -3,7 +3,7 @@
 	url = https://github.com/open-gsd/gsd-core
 [submodule "modules/caveman"]
 	path = modules/caveman
-	url = https://github.com/2n2-ai/caveman
+	url = https://github.com/juliusbrussee/caveman
 [submodule "modules/impeccable"]
 	path = modules/impeccable
 	url = https://github.com/pbakaus/impeccable
