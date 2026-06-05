@@ -57,7 +57,11 @@ gsd-core (67 comandos, só Claude Code)
   ┌──────────────────────────────────┐
   │  Horus Spec Driven               │
   │  ┌────────────────────────────┐   │
-  │  │ Rebrand engine (157 regras)│   │
+  │  │ Submódulos (modules/)          │   │
+  │  │ ├── gsd-core (upstream GSD)   │   │
+  │  │ ├── caveman (compressão)      │   │
+  │  │ └── impeccable (design)       │   │
+  │  │ Rebrand engine (157 regras)   │   │
   │  │ Conversores de conteúdo(5) │   │
   │  │ Conversores de frontmatter │   │
   │  │ Neutralização de subagents │   │
@@ -206,8 +210,14 @@ horus-spec-driven/
 ├── unified-skills/                 18 SKILL.md gerados com i18n
 ├── locales/                        Arquivos de tradução (en, pt)
 ├── runtimes/                       Especificações de layout por plataforma
-├── docs/                           Documentação de arquitetura, rebrand, mapeamento
 ├── modules/                         Submódulos: gsd-core, caveman, impeccable
+├── docs/                           Documentação
+│   ├── ARCHITECTURE.md              Arquitetura completa
+│   ├── COMPATIBILITY.md             Matriz de compatibilidade cross-CLI
+│   ├── CONVERTERS.md                Content & frontmatter converters
+│   ├── HORUS-SDK-MAPPING.md         Mapeamento gsd-tools → horus-sdk
+│   ├── REBRAND.md                   Rebrand engine
+│   └── RUNTIMES.md                  Per-platform specs
 └── ecosystem.daily-sync.cron.json  Cron PM2 diário às 08:00 UTC
 ```
 
@@ -314,6 +324,7 @@ pm2 save
 |---|---|
 | [README-en.md](README-en.md) | English version |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitetura completa do sistema |
+| [COMPATIBILITY.md](docs/COMPATIBILITY.md) | Matriz de compatibilidade cross-CLI |
 | [REBRAND.md](docs/REBRAND.md) | Engine de rebrand e wordlist |
 | [RUNTIMES.md](docs/RUNTIMES.md) | Especificações de layout por plataforma |
 | [CONVERTERS.md](docs/CONVERTERS.md) | Conversores de conteúdo e frontmatter |

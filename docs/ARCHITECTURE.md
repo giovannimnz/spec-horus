@@ -1,195 +1,265 @@
-# Architecture — Spec-Horus
+# Architecture — Horus Spec Driven
 
-Design do wrapper, do rebrand, e do pipeline de install/sync.
+Design do wrapper, submodules, rebrand, e pipeline de install/sync.
 
 ## Visão geral
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  horus-spec-driven  (este repo, MIT)                                        │
+│  horus-spec-driven  (este repo, MIT)                                │
+│                                                                      │
+│  modules/ (git submodules — versionados)                            │
+│  ├── gsd-core/     → open-gsd/gsd-core (upstream GSD)              │
+│  ├── caveman/      → juliusbrussee/caveman (compressão ultra)       │
+│  └── impeccable/   → pbakaus/impeccable (design language)           │
 │                                                                      │
 │  bin/install.js ──┐                                                  │
 │  bin/sync.js ─────┤                                                  │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
-│  │  Stage 1: Pull                                             │      │
-│  │    git clone --depth 1 open-gsd/gsd-core -> modules/gsd-core │      │
+│  │  Stage 1: Pull (git submodule update --remote)             │      │
+│  │    modules/gsd-core/ → open-gsd/gsd-core (latest)          │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
-│  │  Stage 2: Stage                                            │      │
-│  │    copy modules/gsd-core/{commands,agents,skills,workflows,  │      │
-│  │          templates,references} -> modules/staging/          │      │
+│  │  Stage 2: Wordlist                                          │      │
+│  │    scan modules/gsd-core/commands/gsd/*.md                  │      │
+│  │    build unified map: gsd-X → hsd-{role}-Y                  │      │
+│  │    output: modules/unified-wordlist.json                    │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
-│  │  Stage 3: Rebrand                                          │      │
-│  │    scan modules/gsd-core/commands/gsd/*.md -> wordlist      │      │
-│  │    categorize (qa/params/dev) by substring                 │      │
-│  │    rename files gsd-X.md -> shd-X.md | shq-X.md | shp-X.md │      │
-│  │    rewrite body /gsd-X/ -> /sh{X}-X/                       │      │
+│  │  Stage 3: Unified Skills                                    │      │
+│  │    build-unified-skills.cjs gera 18 SKILL.md                │      │
+│  │    17 role-based + 1 hsd-config                             │      │
+│  │    i18n: locale en/pt selecionável                          │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
-│  │  Stage 4: Install per runtime                              │      │
-│  │    for each enabled runtime in horus-spec-driven.json:            │      │
-│  │      resolve paths via runtimes/<id>.json                  │      │
-│  │      copy rebadged files to:                               │      │
-│  │        hermes:  ~/.hermes/skills/, ~/.hermes/agents/       │      │
-│  │        claude:  ~/.claude/{skills,agents,commands}/        │      │
-│  │        codex:   ~/.codex/{agents,prompts}/                 │      │
-│  │        gemini:  ~/.gemini/{skills,commands}/               │      │
-│  │        copilot: ./.github/{agents,prompts}/                │      │
+│  │  Stage 4: Content Converters (por runtime)                  │      │
+│  │    ┌──────────┬───────────────────┬──────────────────┐      │      │
+│  │    │ Runtime  │ Content Conv      │ Frontmatter Conv │      │      │
+│  │    ├──────────┼───────────────────┼──────────────────┤      │      │
+│  │    │ Hermes   │ CLAUDE.md→HERMES  │ SKILL.md +version│      │      │
+│  │    │ Claude   │ Subagent neutro   │ SKILL.md         │      │      │
+│  │    │ Codex    │ $ARG→{{GSD_ARGS}} │ prompt.md        │      │      │
+│  │    │ Gemini   │ .claude→.gemini   │ TOML             │      │      │
+│  │    │ Copilot  │ Tool name mapping │ copilot-instructions│    │      │
+│  │    └──────────┴───────────────────┴──────────────────┘      │      │
+│  └────────────────────────────────────────────────────────────┘      │
+│                   ▼                                                  │
+│  ┌────────────────────────────────────────────────────────────┐      │
+│  │  Stage 5: Install                                           │      │
+│  │    Runtime:          Destino:           Format:             │      │
+│  │    Hermes Agent     skills/hsd/       SKILL.md (nested)    │      │
+│  │    Claude Code      skills/           SKILL.md (flat)     │      │
+│  │    OpenAI Codex     prompts/          prompt.md            │      │
+│  │    Google Gemini    commands/hsd/     .toml                │      │
+│  │    GitHub Copilot   .github/prompts/  copilot-instructions │      │
+│  ├── + horus-sdk-adapter (skill extra, só Hermes)             │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                                                                      │
-│  bin/rebrand.js ─ engine de rebrand (puro)                          │
-│  bin/lib/runtime-paths.js — registry de paths por CLI               │
-│  bin/lib/cli-detect.js — detecção automática                        │
-│  horus-spec-driven.json — config do usuário (runtimes, prefixos, version)  │
+│  Output: 18 skills × N runtimes                                     │
+│                                                                      │
+│  PM2 cron: ecosystem.daily-sync.cron.json (08:00 UTC)               │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-## Wrapper, não fork
+---
 
-Decisão consciente. Razões:
+## Componentes
 
-1. **Compatibilidade automática** com upstream. Quando `open-gsd/gsd-core`
-   lança v1.4, `horus-spec-driven sync` pega na hora. Sem PR, sem merge, sem
-   resolver conflitos de versionamento.
-2. **Zero duplicação de código**. Todos os 86+ comandos vivem no
-   upstream; só mantemos o wrapper.
-3. **Vendor local = offline-capable**. Após primeiro `sync`,
-   `modules/gsd-core/` é cache local; sync subsequente só precisa de
-   `git fetch` + `git reset --hard origin/main`.
-4. **Auditoria trivial**. `diff -ru modules/gsd-core modules/staging`
-   mostra exatamente o que o rebrand mudou.
+### 1. Submódulos (`modules/`)
 
-Tradeoff: dependemos do upstream não quebrar o layout
-(`commands/gsd/*.md`, `agents/gsd-*.md`, `skills/gsd-*/SKILL.md`). Se
-mudarem, o wrapper quebra e precisa de patch. Mitigação: `version` pin
-em `horus-spec-driven.json`.
+Em vez de `git clone --depth 1` (shallow, não versionado), usamos **git submodules**:
 
-## Rebrand engine
+| Submódulo | URL | Propósito |
+|---|---|---|
+| `modules/gsd-core` | open-gsd/gsd-core | Framework GSD upstream (67 comandos) |
+| `modules/caveman` | juliusbrussee/caveman | Comunicação ultra-comprimida |
+| `modules/impeccable` | pbakaus/impeccable | Design language system |
 
-Ver [`REBRAND.md`](REBRAND.md) para detalhes completos.
+Atualização: `git submodule update --init --remote --depth 1 modules/<name>`
 
-Resumo:
+### 2. Wordlist (`bin/rebrand.js`)
 
-- **Wordlist-based**, não regex cego. Lê os 86+ arquivos em
-  `modules/gsd-core/commands/gsd/` e constrói mapa `gsd-X → shd|shq|shp-X`.
-- **Categorização por substring** (em ordem de prioridade):
-  1. `qa` (validate, verify, audit, review, eval, secure, check)
-  2. `params` (config, settings, params, profile-user)
-  3. `dev` (resto)
-- **Determinístico**: rodar 2x produz mesmo output. Idempotente.
-- **Body-aware**: reescreve tanto filenames quanto conteúdo (frontmatter
-  + body markdown) com `\b` word boundaries pra evitar matches parciais.
-
-## Runtime detection
-
-`bin/lib/cli-detect.js` decide qual runtime está ativo. Três sinais:
-
-1. **Flag explícita**: `--runtime=<id>` ou env `SPEC_HORUS_RUNTIME`
-2. **Env probe**: `HERMES_HOME`, `CODEX_HOME`, `GEMINI_CONFIG_DIR`,
-   `CLAUDE_CONFIG_DIR` setados
-3. **Filesystem probe**: `~/.hermes/`, `~/.claude/`, `~/.codex/`,
-   `~/.gemini/`, `./.github/` existem
-4. **Process probe**: argv ou parent comm contém nome do CLI
-
-Cada sinal tem confidence score. Maior score vence. Empate: primeira
-detectada na ordem de RUNTIMES.
-
-## Per-runtime install
-
-`bin/lib/runtime-paths.js` resolve paths absolutos baseado em:
-
-- `home` (global): `~/.hermes/`, `~/.claude/`, etc. Honra env vars.
-- `local` (per-project): `./.claude/`, `./.codex/`, `./.gemini/`,
-  `./.github/` (Copilot é sempre local).
-
-Runtimes que não suportam um modo (ex: Copilot não tem global)
-retornam erro claro. Runtimes com formato especial (Gemini `.toml`,
-Copilot `.prompt.md`) têm format adapter aplicado.
-
-## Configuração do usuário
-
-`horus-spec-driven.json` é a fonte de verdade. Defaults:
-
-```json
-{
-  "gsd_core_version": "latest",
-  "runtimes": {
-    "hermes": { "enabled": true, "mode": "global" },
-    "claude": { "enabled": true, "mode": "global" },
-    "codex":  { "enabled": true, "mode": "global" },
-    "gemini": { "enabled": true, "mode": "global" },
-    "copilot":{ "enabled": false, "mode": "local" }
-  },
-  "prefixes": { "dev": "shd", "qa": "shq", "params": "shp" }
-}
-```
-
-`last_install` é atualizado após cada install bem-sucedido (audit
-trail).
-
-## Vendor lifecycle
+Mapeia 67 comandos do gsd-core em 17 comandos unificados por role:
 
 ```
-primeira vez:
-  horus-spec-driven install
-    → rm -rf modules/
-    → git clone --depth 1 open-gsd/gsd-core modules/gsd-core
-    → stage + rebrand + install
-
-sync subsequente:
-  horus-spec-driven sync
-    → rm -rf modules/
-    → git clone --depth 1 open-gsd/gsd-core modules/gsd-core
-    → stage + rebrand + install
-
-upgrade específico:
-  horus-spec-driven install --version=v1.3.0
-    → git clone --depth 1 --branch v1.3.0 open-gsd/gsd-core modules/gsd-core
-    → stage + rebrand + install
+gsd-new-project     → hsd-po-new        (PO)
+gsd-execute-phase   → hsd-pm-exec       (PM)
+gsd-validate-phase  → hsd-qa-validate   (QA)
+gsd-ui-phase        → hsd-front-ui      (FRONT)
+gsd-debug           → hsd-back-debug    (BACK)
 ```
 
-`modules/` é totalmente gitignored. Não commita, não versiona, não
-distribui. Cada install recria do zero (shallow clone é leve).
+157 regras + agentes + marcas históricas.
+Output: `modules/unified-wordlist.json` (gitignored, gerado).
 
-## Performance
+### 3. Unified Skills (`bin/build-unified-skills.cjs`)
 
-| Stage | Tempo típico |
-|---|---|
-| Pull (shallow clone) | 5-15s |
-| Stage (copy) | < 1s |
-| Rebrand (86+ files) | < 1s |
-| Install per runtime | 1-3s |
-| Total | ~30s cold, ~5s cached |
+Gera 18 SKILL.md a partir do wordlist + comandos vendor:
+- 17 skills com role (po/pm/front/back/qa)
+- 1 skill de configuração (`hsd-config`)
+- Suporte a i18n (locale `--locale pt` ou `en`)
+- Frontmatter YAML + tabela de subcomandos + exemplos
 
-## Tradeoffs e limitações
+### 4. Content Converters (`bin/lib/content-converters/`)
 
-- **Wrapper não pode patchar lógica do gsd-core upstream.** Se um
-  comando tem bug, o fix tem que ir pro upstream primeiro.
-- **Rebrand é one-way.** Se você rodar `horus-spec-driven install` duas vezes,
-  o segundo install é no-op (nada renomeia, mas copia é safe).
-- **Gemini `.toml` conversion é manual.** O gsd-core upstream gera
-  markdown; converter pra TOML é não-trivial (precisa parsear frontmatter,
-  extrair descrição, formatar). Workaround: o `horus-spec-driven install` copia
-  como `.md` e warns sobre conversão manual. Roadmap: `bin/toml-convert.js`.
-- **Codex agent `.toml` conversion é manual.** Mesma situação. Roadmap:
-  `bin/codex-agent-convert.js`.
-- **WSL tem quirks de path.** `os.homedir()` em WSL resolve pro path
-  Windows (`/mnt/c/Users/...`), mas o Windows Node resolve pra
-  `C:\Users\...`. Mitigation: o installer usa `os.homedir()` direto e
-  deixa o runtime resolver. Se quebrar, override via `--<runtime>-config=`.
+Cada runtime converte o conteúdo do SKILL.md para o formato nativo:
 
-## Roadmap
+| Runtime | Arquivo | Transformações |
+|---|---|---|
+| **Hermes** | `hermes.js` | CLAUDE.md→HERMES.md, .claude/→.hermes/, horus-sdk-adapter injection |
+| **Claude** | `claude.js` | Subagent neutralization, colon→hyphen |
+| **Codex** | `codex.js` | $ARGUMENTS→{{GSD_ARGS}}, slash→skill mentions |
+| **Gemini** | `gemini.js` | .claude→.gemini, CLAUDE.md→GEMINI.md |
+| **Copilot** | `copilot.js` | Tool name mapping, AGENTS.md→copilot-instructions.md |
 
-- [ ] `horus-spec-driven uninstall`
-- [ ] TOML converter pra Gemini
-- [ ] `.toml` converter pra Codex agents
-- [ ] Suporte a Kilo, Cursor, Windsurf, OpenCode, Cline, Augment
-- [ ] Systemd user timer pra sync diário
-- [ ] CI pra validar rebrand (lint test)
-- [ ] Lockfile (`horus-spec-driven.lock`) com sha256 do vendor
-- [ ] Webhook do GitHub pra notificar novos releases do upstream
+### 5. Frontmatter Converters (`bin/lib/frontmatter-converters/`)
+
+Cada runtime tem seu formato de frontmatter:
+- **Hermes**: SKILL.md com YAML completo + version
+- **Claude**: SKILL.md com YAML (reuso do Hermes)
+- **Codex**: prompt.md com template vars
+- **Gemini**: TOML
+- **Copilot**: copilot-instructions.md
+
+### 6. horus-sdk-adapter (`bin/lib/horus-sdk-adapter/`)
+
+Reimplementação completa do `gsd-tools.cjs` para Hermes. 13 módulos, 31 verbos:
+
+```
+state.cjs     (16 subcomandos)    — load, init, snapshot, summary, history
+config.cjs    (6 subcomandos)     — get, set, model-profile, new-project
+commit.cjs    (3 subcomandos)     — commit, subrepo, check
+frontmatter.cjs (4 subcomandos)  — get, set, merge, validate
+roadmap.cjs   (13 subcomandos)   — get-phase, analyze, add, insert
+validate.cjs  (7 subcomandos)    — consistency, health, audit-uat
+workstream.cjs (6 subcomandos)   — create, list, set, complete
+scaffold.cjs  (5 subcomandos)    — context, uat, verification
+milestone.cjs (2 subcomandos)    — complete, requirements
+misc.cjs      (13 subcomandos)   — list-todos, gap-analysis, learnings
+resolve.cjs   (5 subcomandos)    — progress, resolve-model, granularity
+graphify.cjs  (5 subcomandos)    — build, query, status, diff (JS fallback)
+graphifyy.py  (460 linhas)       — Python code-aware scanner
+index.cjs     (dispatch CLI)     — 31 verbos
+```
+
+### 7. graphifyy.py
+
+Scanner de código em Python stdlib, zero dependências:
+
+- **Python**: AST parser — classes, funções, imports
+- **JS/TS**: Regex — exports, imports, requires, rotas
+- **SQL**: Regex — CREATE TABLE
+- **Genérico**: Go, Rust, Java, etc.
+
+3 tiers de armazenamento (auto-detect):
+1. Python (code-aware) — melhor
+2. File JSON (`.planning/graphs/graph.json`) — fallback
+3. PostgreSQL (`postgres_fact_store`) — se disponível
+
+### 8. i18n (`locales/`)
+
+Alternância de idioma via `horus-spec-driven language <code>`:
+- `en` → English
+- `pt` → Português
+
+Apenas descrições dos comandos são traduzidas. Artefatos `.planning/` permanecem em inglês.
+
+---
+
+## Fluxo de Instalação
+
+```bash
+# 1. Clonar com submodules
+git clone --recurse-submodules https://github.com/giovannimnz/horus-spec-driven.git
+
+# 2. Pull latest upstream
+git submodule update --init --remote --depth 1 modules/gsd-core
+
+# 3. Build wordlist
+node bin/rebrand.js modules/unified-wordlist.json
+
+# 4. Build unified skills (com locale)
+node bin/build-unified-skills.cjs --locale pt
+
+# 5. Install
+node bin/install.js install --runtime=hermes --global --no-pull
+
+# 6. (Opcional) Sync diário automático
+pm2 start ecosystem.daily-sync.cron.json
+pm2 save
+```
+
+---
+
+## Fluxo de Sync (Diário)
+
+08:00 UTC via PM2 (config em `ecosystem.daily-sync.cron.json`):
+
+```
+1. git submodule update --remote modules/gsd-core
+2. node bin/rebrand.js modules/unified-wordlist.json
+3. node bin/build-unified-skills.cjs
+4. node bin/install.js install --all --global --no-pull
+```
+
+---
+
+## Estrutura do Repositório
+
+```
+horus-spec-driven/
+├── bin/
+│   ├── install.js                  Pipeline completo (pull → rebrand → build → install)
+│   ├── rebrand.js                  Wordlist builder (157 regras, 67→17)
+│   ├── build-unified-skills.cjs    Gera 18 SKILL.md com i18n
+│   ├── sync.js                     Convenience wrapper (install --no-pull)
+│   └── lib/
+│       ├── horus-sdk-adapter/      Reimplementation do gsd-tools.cjs (31 verbos)
+│       ├── content-converters/     5 conversores de conteúdo (hermes, claude, codex, gemini, copilot)
+│       ├── frontmatter-converters/ 5 conversores de frontmatter
+│       ├── subagent-adapter/       Neutralização de Agent() calls
+│       ├── layout.js               Layout kind-driven por runtime
+│       └── runtime-paths.js        Resolução de home por runtime
+├── modules/ (+ .gitmodules)        Submódulos versionados
+│   ├── gsd-core/                   open-gsd/gsd-core (upstream)
+│   ├── caveman/                    juliusbrussee/caveman
+│   └── impeccable/                 pbakaus/impeccable
+├── unified-skills/                 18 SKILL.md gerados (gitignored? verificar)
+├── locales/                        Traduções (en.json, pt.json)
+├── runtimes/                       Specs de cada CLI
+├── docs/                           Documentação
+│   ├── ARCHITECTURE.md             Este arquivo
+│   ├── COMPATIBILITY.md            Matriz de compatibilidade cross-CLI
+│   ├── CONVERTERS.md               Content & frontmatter converters
+│   ├── HORUS-SDK-MAPPING.md        Mapeamento gsd-tools → horus-sdk
+│   ├── REBRAND.md                  Rebrand engine
+│   └── RUNTIMES.md                 Per-platform specs
+├── README.md / README-en.md        Documentação principal (pt/en)
+├── SETUP.md                        Quick setup
+├── CHANGELOG.md                    Histórico de versões
+├── horus-spec-driven.json          Config principal
+└── ecosystem.daily-sync.cron.json  PM2 cron
+```
+
+---
+
+## Decision Log
+
+| Decisão | Detalhes | Arquivo |
+|---|---|---|
+| D-01 | Unificação por role (67→17) | vault 21.01 |
+| D-02 | Storage-agnostic graphify | vault 21.01 |
+| D-03 | Prefixo hsd (Horus Spec Driven) | vault 21.01 |
+| D-04 | Subcomandos via $ARGUMENTS[0] | vault 21.01 |
+| D-05 | Layout skills/hsd/ como namespace raiz | vault 21.01 |
+| D-06 | Reimplementação total do gsd-tools.cjs | vault 21.03 |
+| D-07 | graphifyy.py em Python stdlib | vault 21.03 |
+| D-08 | <horus_sdk_adapter> injection | vault 21.03 |
+| D-09 | agent-skills via skill_view() | vault 21.03 |
+| D-10 | Localização apenas nas descrições | vault 21.04 |
+| D-11 | Persistência e rebuild automático | vault 21.04 |
+| D-12 | /hsd-config para configurar idioma | vault 21.04 |

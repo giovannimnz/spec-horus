@@ -55,7 +55,11 @@ gsd-core (67 commands, Claude-only)
   ┌──────────────────────────────────┐
   │  Horus Spec Driven               │
   │  ┌────────────────────────────┐   │
-  │  │ Rebrand engine (157 rules) │   │
+  │  │ Submodules (modules/)          │   │
+  │  │ ├── gsd-core (upstream GSD)   │   │
+  │  │ ├── caveman (compression)     │   │
+  │  │ └── impeccable (design)       │   │
+  │  │ Rebrand engine (157 rules)    │   │
   │  │ Content converters (5)     │   │
   │  │ Frontmatter converters (5) │   │
   │  │ Subagent neutralization    │   │
@@ -212,6 +216,18 @@ pm2 save
 ```
 
 ---
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| [README.md](README.md) | Versão em português |
+| [COMPATIBILITY.md](docs/COMPATIBILITY.md) | Cross-CLI compatibility matrix |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full system architecture |
+| [REBRAND.md](docs/REBRAND.md) | Rebrand engine & wordlist |
+| [RUNTIMES.md](docs/RUNTIMES.md) | Per-platform layout specs |
+| [CONVERTERS.md](docs/CONVERTERS.md) | Content & frontmatter converters |
+| [HORUS-SDK-MAPPING.md](docs/HORUS-SDK-MAPPING.md) | gsd-tools → horus-sdk mapping |
 
 ## Requirements
 
