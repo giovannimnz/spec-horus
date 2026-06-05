@@ -4,9 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.resolve(__dirname, '..');
-const VENDOR_CMDS = path.join(ROOT, 'vendor', 'gsd-core', 'commands', 'gsd');
-const WORDLIST_PATH = path.join(ROOT, 'vendor', 'unified-wordlist.json');
+  const ROOT = path.resolve(__dirname, '..');
+  const VENDOR_CMDS = path.join(ROOT, 'modules', 'gsd-core', 'commands', 'gsd');
+  const WORDLIST_PATH = path.join(ROOT, 'modules', 'unified-wordlist.json');
 const OUT_DIR = path.join(ROOT, 'unified-skills');
 const CONFIG_PATH = path.join(ROOT, 'horus-spec-driven.json');
 const LOCALES_DIR = path.join(ROOT, 'locales');

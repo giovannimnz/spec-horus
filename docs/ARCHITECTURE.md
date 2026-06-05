@@ -13,18 +13,18 @@ Design do wrapper, do rebrand, e do pipeline de install/sync.
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
 │  │  Stage 1: Pull                                             │      │
-│  │    git clone --depth 1 open-gsd/gsd-core -> vendor/gsd-core │      │
+│  │    git clone --depth 1 open-gsd/gsd-core -> modules/gsd-core │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
 │  │  Stage 2: Stage                                            │      │
-│  │    copy vendor/gsd-core/{commands,agents,skills,workflows,  │      │
-│  │          templates,references} -> vendor/staging/          │      │
+│  │    copy modules/gsd-core/{commands,agents,skills,workflows,  │      │
+│  │          templates,references} -> modules/staging/          │      │
 │  └────────────────────────────────────────────────────────────┘      │
 │                   ▼                                                  │
 │  ┌────────────────────────────────────────────────────────────┐      │
 │  │  Stage 3: Rebrand                                          │      │
-│  │    scan vendor/gsd-core/commands/gsd/*.md -> wordlist      │      │
+│  │    scan modules/gsd-core/commands/gsd/*.md -> wordlist      │      │
 │  │    categorize (qa/params/dev) by substring                 │      │
 │  │    rename files gsd-X.md -> shd-X.md | shq-X.md | shp-X.md │      │
 │  │    rewrite body /gsd-X/ -> /sh{X}-X/                       │      │
@@ -59,9 +59,9 @@ Decisão consciente. Razões:
 2. **Zero duplicação de código**. Todos os 86+ comandos vivem no
    upstream; só mantemos o wrapper.
 3. **Vendor local = offline-capable**. Após primeiro `sync`,
-   `vendor/gsd-core/` é cache local; sync subsequente só precisa de
+   `modules/gsd-core/` é cache local; sync subsequente só precisa de
    `git fetch` + `git reset --hard origin/main`.
-4. **Auditoria trivial**. `diff -ru vendor/gsd-core vendor/staging`
+4. **Auditoria trivial**. `diff -ru modules/gsd-core modules/staging`
    mostra exatamente o que o rebrand mudou.
 
 Tradeoff: dependemos do upstream não quebrar o layout
@@ -76,7 +76,7 @@ Ver [`REBRAND.md`](REBRAND.md) para detalhes completos.
 Resumo:
 
 - **Wordlist-based**, não regex cego. Lê os 86+ arquivos em
-  `vendor/gsd-core/commands/gsd/` e constrói mapa `gsd-X → shd|shq|shp-X`.
+  `modules/gsd-core/commands/gsd/` e constrói mapa `gsd-X → shd|shq|shp-X`.
 - **Categorização por substring** (em ordem de prioridade):
   1. `qa` (validate, verify, audit, review, eval, secure, check)
   2. `params` (config, settings, params, profile-user)
@@ -137,23 +137,23 @@ trail).
 ```
 primeira vez:
   horus-spec-driven install
-    → rm -rf vendor/
-    → git clone --depth 1 open-gsd/gsd-core vendor/gsd-core
+    → rm -rf modules/
+    → git clone --depth 1 open-gsd/gsd-core modules/gsd-core
     → stage + rebrand + install
 
 sync subsequente:
   horus-spec-driven sync
-    → rm -rf vendor/
-    → git clone --depth 1 open-gsd/gsd-core vendor/gsd-core
+    → rm -rf modules/
+    → git clone --depth 1 open-gsd/gsd-core modules/gsd-core
     → stage + rebrand + install
 
 upgrade específico:
   horus-spec-driven install --version=v1.3.0
-    → git clone --depth 1 --branch v1.3.0 open-gsd/gsd-core vendor/gsd-core
+    → git clone --depth 1 --branch v1.3.0 open-gsd/gsd-core modules/gsd-core
     → stage + rebrand + install
 ```
 
-`vendor/` é totalmente gitignored. Não commita, não versiona, não
+`modules/` é totalmente gitignored. Não commita, não versiona, não
 distribui. Cada install recria do zero (shallow clone é leve).
 
 ## Performance

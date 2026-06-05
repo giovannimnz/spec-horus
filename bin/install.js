@@ -44,7 +44,7 @@ const { buildWordlist } = require('./rebrand.js');
 const { getRuntimeLayout, listRuntimes, makeCmdNames } = require('./lib/layout.js');
 
 const ROOT = path.resolve(__dirname, '..');
-const VENDOR_DIR = path.join(ROOT, 'vendor');
+const MODULES_DIR = path.join(ROOT, 'modules');
 const SPEC_HORUS_JSON = path.join(ROOT, 'horus-spec-driven.json');
 const PKG = require(path.join(ROOT, 'package.json'));
 const PKG_VERSION = PKG.version;
@@ -100,29 +100,24 @@ function saveConfig(cfg) {
   fs.writeFileSync(SPEC_HORUS_JSON, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
 }
 
-// ─── vendor pull ──────────────────────────────────────────────────────────
+// ─── modules pull (submodule update) ─────────────────────────────────────
 
-function pullVendor(version) {
-  header('Vendoring gsd-core');
-  if (fs.existsSync(VENDOR_DIR)) {
-    fs.rmSync(VENDOR_DIR, { recursive: true, force: true });
-  }
-  fs.mkdirSync(VENDOR_DIR, { recursive: true });
-
-  if (version === 'latest' || !version) {
-    info('cloning https://github.com/open-gsd/gsd-core.git (default branch)');
-    execSync('git clone --depth 1 https://github.com/open-gsd/gsd-core.git gsd-core', {
-      cwd: VENDOR_DIR,
-      stdio: 'inherit',
-    });
-  } else {
-    info(`cloning https://github.com/open-gsd/gsd-core.git @ ${version}`);
-    execSync(`git clone --depth 1 --branch ${version} https://github.com/open-gsd/gsd-core.git gsd-core`, {
-      cwd: VENDOR_DIR,
-      stdio: 'inherit',
-    });
-  }
-  ok(`vendored gsd-core at vendor/gsd-core/`);
+function pullModules(version) {
+  header('Updating submodules');
+  info('updating gsd-core submodule');
+  execSync('git submodule update --init --depth 1 --remote modules/gsd-core', {
+    cwd: ROOT,
+    stdio: 'inherit',
+  });
+  info('updating caveman submodule');
+  execSync('git submodule update --init --depth 1 --remote modules/caveman 2>&1 || true', {
+    cwd: ROOT, stdio: 'pipe',
+  });
+  info('updating impeccable submodule');
+  execSync('git submodule update --init --depth 1 --remote modules/impeccable 2>&1 || true', {
+    cwd: ROOT, stdio: 'pipe',
+  });
+  ok('submodules updated');
 }
 
 // ─── install one kind for one runtime ─────────────────────────────────────
@@ -130,9 +125,9 @@ function pullVendor(version) {
 function installKind(runtimeId, mode, kindSpec, wordlist, dryRun) {
   const baseDir = resolveBaseDir(runtimeId, mode);
   const destDir = path.join(baseDir, kindSpec.destSubpath);
-  const srcCommandsDir = path.join(VENDOR_DIR, 'gsd-core', 'commands', 'gsd');
-  const srcAgentsDir = path.join(VENDOR_DIR, 'gsd-core', 'agents');
-  const srcSkillsDir = path.join(VENDOR_DIR, 'gsd-core', 'skills');
+  const srcCommandsDir = path.join(MODULES_DIR, 'gsd-core', 'commands', 'gsd');
+  const srcAgentsDir = path.join(MODULES_DIR, 'gsd-core', 'agents');
+  const srcSkillsDir = path.join(MODULES_DIR, 'gsd-core', 'skills');
   const unifiedSkillsDir = path.join(ROOT, 'unified-skills');
   const cmdNames = makeCmdNames(wordlist);
 
@@ -364,57 +359,6 @@ node ~/.hermes/skills/hsd/horus-sdk-adapter/index.cjs roadmap get-phase 1 --cwd 
     }
     total += 1;
     info(`  adapter/: horus-sdk-adapter skill installed (${dryRun ? 'dry-run' : 'real'})`);
-
-    // Also install hsd-model-fs as a custom skill
-    const modelFsDir = path.join(resolveBaseDir(runtimeId, mode), 'skills', 'hsd', 'hsd-model-fs');
-    const modelFsSkill = `---
-name: hsd-model-fs
-description: "Model Fast Switch — toggle between current and last used model"
-version: ${PKG_VERSION}
-author: "Horus Spec Driven"
-license: "MIT"
-platforms:
-  - hermes
-metadata:
-  hermes:
-    tags: ["hsd", "model", "switch"]
-    category: "config"
----
-
-# 🔄 hsd-model-fs — Model Fast Switch
-
-Toggle between the current model and the last used model.
-
-## How It Works
-
-1. Reads horus-spec-driven.json → model_fs.current_model and model_fs.last_model
-2. Swaps them
-3. Calls \`hermes config set model.default <new_model>\`
-4. Persists state
-
-## Runtime
-
-\\\`\\\`\\\`bash
-CFG=~/GitHub/horus-spec-driven/horus-spec-driven.json
-CURRENT=$(python3 -c "import json;print(json.load(open('$CFG'))['model_fs']['current_model'])")
-LAST=$(python3 -c "import json;print(json.load(open('$CFG'))['model_fs']['last_model'])")
-python3 -c "
-import json
-cfg=json.load(open('$CFG'))
-cfg['model_fs']['current_model']='$LAST'
-cfg['model_fs']['last_model']='$CURRENT'
-json.dump(cfg,open('$CFG','w'),indent=2)
-"
-hermes config set model.default "$LAST"
-echo "Switched: $CURRENT → $LAST"
-\\\`\\\`\\\`
-`;
-    if (!dryRun) {
-      fs.mkdirSync(modelFsDir, { recursive: true });
-      fs.writeFileSync(path.join(modelFsDir, 'SKILL.md'), modelFsSkill);
-    }
-    total += 1;
-    info(`  hsd-model-fs/: hsd-model-fs skill installed (${dryRun ? 'dry-run' : 'real'})`);
   }
 
   return { installed: total, skipped: 0 };
@@ -440,7 +384,7 @@ install/sync options:
   --global                    Install into the runtime's global home (default)
   --local                     Install into the project dir (./.claude, ./.codex, etc.)
   --dry-run                   Print what would happen; make no changes
-  --no-vendor-pull            Skip pulling gsd-core (assume vendor/ is fresh)
+  --no-pull            Skip pulling gsd-core (assume modules/ is fresh)
   --version=<tag|branch>      Pin gsd-core version (default: latest)
   --hermes-config=<path>      Override HERMES_HOME
   --claude-config=<path>      Override CLAUDE_CONFIG_DIR
@@ -464,12 +408,12 @@ function cmdDetect() {
 }
 
 function cmdWordlist() {
-  if (!fs.existsSync(path.join(VENDOR_DIR, 'gsd-core'))) {
-    err('vendor/gsd-core/ missing — run `horus-spec-driven install` first');
+  if (!fs.existsSync(path.join(MODULES_DIR, 'gsd-core'))) {
+    err('modules/gsd-core/ missing — run `horus-spec-driven install` first');
     process.exit(1);
   }
-  const commandsDir = path.join(VENDOR_DIR, 'gsd-core', 'commands', 'gsd');
-  const agentsDir = path.join(VENDOR_DIR, 'gsd-core', 'agents');
+  const commandsDir = path.join(MODULES_DIR, 'gsd-core', 'commands', 'gsd');
+  const agentsDir = path.join(MODULES_DIR, 'gsd-core', 'agents');
   const wl = buildWordlist(commandsDir, agentsDir);
   const rows = Array.from(wl.entries()).sort();
   console.log(`\n  ${rows.length} entries (commands + agents)\n`);
@@ -486,7 +430,7 @@ function parseArgs(argv) {
     runtimes: [],
     mode: 'global',
     dryRun: false,
-    pullVendor: true,
+    pullModules: true,
     version: 'latest',
     configOverrides: {},
   };
@@ -504,8 +448,8 @@ function parseArgs(argv) {
       opts.mode = 'local';
     } else if (a === '--dry-run') {
       opts.dryRun = true;
-    } else if (a === '--no-vendor-pull') {
-      opts.pullVendor = false;
+    } else if (a === '--no-pull') {
+      opts.pullModules = false;
     } else if (a.startsWith('--version=')) {
       opts.version = a.split('=')[1];
     } else if (a.startsWith('--hermes-config=')) {
@@ -545,16 +489,16 @@ async function cmdInstall(opts) {
   const config = loadConfig();
   const runtimes = pickRuntimes(opts);
 
-  if (opts.pullVendor) pullVendor(opts.version);
-  else info('skipping vendor pull (using existing vendor/gsd-core)');
+  if (opts.pullModules) pullModules(opts.version);
+  else info('skipping modules pull (using existing modules/gsd-core)');
 
   header('Building rebrand wordlist');
-  const commandsDir = path.join(VENDOR_DIR, 'gsd-core', 'commands', 'gsd');
-  const agentsDir = path.join(VENDOR_DIR, 'gsd-core', 'agents');
+  const commandsDir = path.join(MODULES_DIR, 'gsd-core', 'commands', 'gsd');
+  const agentsDir = path.join(MODULES_DIR, 'gsd-core', 'agents');
   const wordlist = buildWordlist(commandsDir, agentsDir);
   info(`wordlist: ${wordlist.size} entries (commands + agents)`);
   fs.writeFileSync(
-    path.join(VENDOR_DIR, 'rebrand-wordlist.json'),
+    path.join(MODULES_DIR, 'rebrand-wordlist.json'),
     JSON.stringify(Array.from(wordlist.entries()).sort(), null, 2) + '\n'
   );
 
@@ -578,13 +522,13 @@ async function cmdInstall(opts) {
 
   header('Done');
   ok(`horus-spec-driven v${PKG_VERSION} installed ${totalFiles} files across ${runtimes.length} runtime(s)`);
-  console.log(`\n  Rebrand wordlist: vendor/rebrand-wordlist.json`);
+  console.log(`\n  Rebrand wordlist: modules/rebrand-wordlist.json`);
   console.log(`  Config: horus-spec-driven.json\n`);
 }
 
 async function cmdSync(opts) {
   info('sync: pulling latest gsd-core and re-installing');
-  opts.pullVendor = true;
+  opts.pullModules = true;
   opts.version = 'latest';
   return cmdInstall(opts);
 }
@@ -645,7 +589,7 @@ function cmdLanguage(localeTarget) {
 
     // Reinstall
     header('Reinstalling skills');
-    const opts = parseArgs(['install', '--runtime=hermes', '--global', '--no-vendor-pull']);
+    const opts = parseArgs(['install', '--runtime=hermes', '--global', '--no-pull']);
     return cmdInstall(opts);
   } catch (e) {
     console.error(`  ${C.red}✗${C.reset} Language switch failed: ${e.message}`);

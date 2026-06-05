@@ -178,9 +178,9 @@ function writeWordlist(wordlist, outputPath) {
 // ── CLI ───────────────────────────────────────────────────────────────────
 
 if (require.main === module) {
-  const vendorDir = path.join(__dirname, '..', '..', 'vendor', 'gsd-core', 'commands', 'gsd');
+  const vendorDir = path.join(__dirname, '..', 'modules', 'gsd-core', 'commands', 'gsd');
   const wl = buildWordlist(vendorDir);
-  const out = process.argv[2] || path.join(__dirname, '..', '..', 'vendor', 'unified-wordlist.json');
+  const out = process.argv[2] || path.join(__dirname, '..', 'modules', 'unified-wordlist.json');
   const count = writeWordlist(wl, out);
   console.log(`Unified wordlist: ${count} entries → ${out}`);
   console.log('');

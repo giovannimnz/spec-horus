@@ -311,7 +311,7 @@ deixando só a coluna Hermes + a descrição).
 
 Criar `bin/gsd-adapter.js` — um CLI Node minimalista que traduz os 11
 subcomandos de Nível B em chamadas de filesystem + git. Os skills chamam
-`node $SPEC_HORUS_ROOT/vendor/gsd-core/bin/gsd-tools.cjs equivalent <verb>`
+`node $SPEC_HORUS_ROOT/modules/gsd-core/bin/gsd-tools.cjs equivalent <verb>`
 ou, para Hermes, `terminal(node bin/gsd-adapter.js <verb> [args])`.
 
 ### Fase 3c — Nível C (5 graphify)

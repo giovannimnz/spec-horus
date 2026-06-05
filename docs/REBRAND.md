@@ -6,7 +6,7 @@ Como Spec-Horus transforma `/gsd-*` em `/shd-*`, `/shq-*`, `/shp-*`.
 
 **Wordlist-based, não regex cego.**
 
-Lemos `vendor/gsd-core/commands/gsd/*.md` no momento do install, e
+Lemos `modules/gsd-core/commands/gsd/*.md` no momento do install, e
 construímos um mapa exato `oldName → newName`. Não usamos regex como
 `gsd-.*` que poderia casar conteúdo legítimo.
 
@@ -33,7 +33,7 @@ Prioridade: **qa > params > dev**. Se um nome tem `validate` E `config`
 ## Mapeamento completo (gsd-core v1.3.1-dev)
 
 86+ comandos catalogados. Ver
-`vendor/rebrand-wordlist.json` após primeiro `horus-spec-driven install` (ou
+`modules/rebrand-wordlist.json` após primeiro `horus-spec-driven install` (ou
 rodar `node bin/install.js wordlist`).
 
 Exemplos:

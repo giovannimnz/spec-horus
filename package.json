@@ -10,7 +10,7 @@
     "wordlist": "node bin/install.js wordlist",
     "install": "node bin/install.js install --all --global",
     "sync": "node bin/install.js sync",
-    "unified": "node bin/rebrand.js vendor/unified-wordlist.json && node bin/build-unified-skills.cjs",
+    "unified": "node bin/rebrand.js modules/unified-wordlist.json && node bin/build-unified-skills.cjs",
     "install:hermes": "node bin/install.js install --runtime=hermes --global",
     "install:claude": "node bin/install.js install --runtime=claude --global",
     "install:codex": "node bin/install.js install --runtime=codex --global",

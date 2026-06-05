@@ -28,7 +28,7 @@ function convertClaudeMarkdown(content, cmdNames) {
   // Path rewrites: upstream gsd-core references its own install location
   // (`~/.claude/gsd-core/...` or `$HOME/.claude/gsd-core/...`). These
   // are PATHS to the upstream vendor dir, not the user's runtime config.
-  // In horus-spec-driven, the vendor is at `vendor/gsd-core/` in the horus-spec-driven
+  // In horus-spec-driven, the vendor is at `modules/gsd-core/` in the horus-spec-driven
   // repo, not at `~/.claude/gsd-core/`. Rewrite to point at the rebadged
   // skill that ships with horus-spec-driven.
   c = c.replace(/@?~\/\.claude\/gsd-core\/workflows\//g, '~/.claude/skills/');

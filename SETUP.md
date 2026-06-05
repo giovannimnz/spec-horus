@@ -7,7 +7,7 @@ git clone https://github.com/giovannimnz/horus-spec-driven.git ~/GitHub/horus-sp
 cd ~/GitHub/horus-spec-driven
 
 # Build unified skills
-node bin/rebrand.js vendor/unified-wordlist.json
+node bin/rebrand.js modules/unified-wordlist.json
 node bin/build-unified-skills.cjs
 
 # Install all runtimes

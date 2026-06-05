@@ -76,10 +76,6 @@
     ],
     "mode": "global",
     "gsd_core_version": "latest",
-    "date": "2026-06-05T10:15:05.905Z"
-  },
-  "model_fs": {
-    "last_model": "deepseek-v4-pro",
-    "current_model": "deepseek-v4-flash"
+    "date": "2026-06-05T11:07:42.270Z"
   }
 }

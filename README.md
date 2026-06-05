@@ -207,7 +207,7 @@ horus-spec-driven/
 ├── locales/                        Arquivos de tradução (en, pt)
 ├── runtimes/                       Especificações de layout por plataforma
 ├── docs/                           Documentação de arquitetura, rebrand, mapeamento
-├── vendor/                         gsd-core (gitignored, baixado na instalação)
+├── modules/                         Submódulos: gsd-core, caveman, impeccable
 └── ecosystem.daily-sync.cron.json  Cron PM2 diário às 08:00 UTC
 ```
 
