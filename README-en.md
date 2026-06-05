@@ -64,7 +64,7 @@ The same 3 roles + config adapt to each runtime's format:
 | **Hermes** | `/hsd-dev` `/hsd-pm` `/hsd-qa` `/hsd-config` (4) | SKILL.md nested | `$ARGUMENTS[0]` in body |
 | **Claude Code** | `/hsd-dev` `/hsd-pm` `/hsd-qa` `/hsd-config` (4) | SKILL.md flat | `$ARGUMENTS[0]` in body |
 | **Codex CLI** | `hsd-dev-discover` ... `hsd-config` (16) | prompt.md | 1 file per subcommand |
-| **Gemini CLI** | `/hsd:dev-discover` ... `/hsd:config-language` (16) | .toml | 1 file per subcommand |
+| **Gemini CLI** | `/hsd-dev:discover` ... `/hsd-config:language` (16) | .toml | 1 file per subcommand |
 | **GitHub Copilot** | `hsd-dev-discover` ... `hsd-config` (16) | copilot-instructions.md | 1 file per subcommand |
 
 ---
@@ -79,4 +79,4 @@ node bin/install.js install --runtime=hermes --global
 
 ---
 
-**v4.0 — 4 commands, 5 platforms, 67 skills unified.**
+**v4.0 — 3 roles, 4-16 commands per runtime, 5 platforms, 67 skills unified.**

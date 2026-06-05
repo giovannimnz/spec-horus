@@ -165,7 +165,7 @@ A mesma unificação (3 papéis + config) se adapta ao formato de cada runtime:
 | **Hermes** | `/hsd-dev` `/hsd-pm` `/hsd-qa` `/hsd-config` (4) | SKILL.md nested | `$ARGUMENTS[0]` no body |
 | **Claude Code** | `/hsd-dev` `/hsd-pm` `/hsd-qa` `/hsd-config` (4) | SKILL.md flat | `$ARGUMENTS[0]` no body |
 | **Codex CLI** | `hsd-dev-discover` ... `hsd-config` (16) | prompt.md | 1 arquivo por subcomando |
-| **Gemini CLI** | `/hsd:dev-discover` ... `/hsd:config-language` (16) | .toml | 1 arquivo por subcomando |
+| **Gemini CLI** | `/hsd-dev:discover` ... `/hsd-config:language` (16) | .toml | 1 arquivo por subcomando |
 | **GitHub Copilot** | `hsd-dev-discover` ... `hsd-config` (16) | copilot-instructions.md | 1 arquivo por subcomando |
 
 **Hermes e Claude** usam 4 arquivos com roteamento inteligente. **Codex, Gemini e Copilot** precisam de 1 arquivo por subcomando (16 no total) — pois não suportam `$ARGUMENTS[0]`.

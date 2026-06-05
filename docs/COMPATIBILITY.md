@@ -19,22 +19,22 @@
 
 | Role | Subcommand | Hermes | Claude Code | Codex | Gemini CLI | Copilot |
 |---|---|---|---|---|---|---|
-| DEV | discover | `/hsd-dev` (via `$ARGUMENTS[0]`) | `/hsd-dev` (flat SKILL.md) | `hsd-dev.md` | `/hsd:dev-discover` (.toml) | `hsd-dev.md` |
-| DEV | define | mesmo | mesmo | hsd-dev.md | `/hsd:dev-define` | hsd-dev.md |
-| DEV | plan | mesmo | mesmo | hsd-dev.md | `/hsd:dev-plan` | hsd-dev.md |
-| DEV | build | mesmo | mesmo | hsd-dev.md | `/hsd:dev-build` | hsd-dev.md |
-| DEV | debug | mesmo | mesmo | hsd-dev.md | `/hsd:dev-debug` | hsd-dev.md |
-| DEV | maintain | mesmo | mesmo | hsd-dev.md | `/hsd:dev-maintain` | hsd-dev.md |
-| DEV | ui | mesmo | mesmo | hsd-dev.md | `/hsd:dev-ui` | hsd-dev.md |
-| PM | new | `/hsd-pm` | `/hsd-pm` | hsd-pm.md | `/hsd:pm-new` | hsd-pm.md |
-| PM | track | mesmo | mesmo | hsd-pm.md | `/hsd:pm-track` | hsd-pm.md |
-| PM | ship | mesmo | mesmo | hsd-pm.md | `/hsd:pm-ship` | hsd-pm.md |
-| PM | config | mesmo | mesmo | hsd-pm.md | `/hsd:pm-config` | hsd-pm.md |
-| PM | manage | mesmo | mesmo | hsd-pm.md | `/hsd:pm-manage` | hsd-pm.md |
-| QA | validate | `/hsd-qa` | `/hsd-qa` | hsd-qa.md | `/hsd:qa-validate` | hsd-qa.md |
-| QA | audit | mesmo | mesmo | hsd-qa.md | `/hsd:qa-audit` | hsd-qa.md |
-| QA | review | mesmo | mesmo | hsd-qa.md | `/hsd:qa-review` | hsd-qa.md |
-| CONFIG | language | `/hsd-config` | `/hsd-config` | hsd-config.md | `/hsd:config-language` | hsd-config.md |
+| DEV | discover | `/hsd-dev` (via `$ARGUMENTS[0]`) | `/hsd-dev` (flat SKILL.md) | `hsd-dev.md` | `/hsd-dev:discover` (.toml) | `hsd-dev.md` |
+| DEV | define | mesmo | mesmo | hsd-dev.md | `/hsd-dev:define` | hsd-dev.md |
+| DEV | plan | mesmo | mesmo | hsd-dev.md | `/hsd-dev:plan` | hsd-dev.md |
+| DEV | build | mesmo | mesmo | hsd-dev.md | `/hsd-dev:build` | hsd-dev.md |
+| DEV | debug | mesmo | mesmo | hsd-dev.md | `/hsd-dev:debug` | hsd-dev.md |
+| DEV | maintain | mesmo | mesmo | hsd-dev.md | `/hsd-dev:maintain` | hsd-dev.md |
+| DEV | ui | mesmo | mesmo | hsd-dev.md | `/hsd-dev:ui` | hsd-dev.md |
+| PM | new | `/hsd-pm` | `/hsd-pm` | hsd-pm.md | `/hsd-pm:new` | hsd-pm.md |
+| PM | track | mesmo | mesmo | hsd-pm.md | `/hsd-pm:track` | hsd-pm.md |
+| PM | ship | mesmo | mesmo | hsd-pm.md | `/hsd-pm:ship` | hsd-pm.md |
+| PM | config | mesmo | mesmo | hsd-pm.md | `/hsd-pm:config` | hsd-pm.md |
+| PM | manage | mesmo | mesmo | hsd-pm.md | `/hsd-pm:manage` | hsd-pm.md |
+| QA | validate | `/hsd-qa` | `/hsd-qa` | hsd-qa.md | `/hsd-qa:validate` | hsd-qa.md |
+| QA | audit | mesmo | mesmo | hsd-qa.md | `/hsd-qa:audit` | hsd-qa.md |
+| QA | review | mesmo | mesmo | hsd-qa.md | `/hsd-qa:review` | hsd-qa.md |
+| CONFIG | language | `/hsd-config` | `/hsd-config` | hsd-config.md | `/hsd-config:language` | hsd-config.md |
 
 ---
 

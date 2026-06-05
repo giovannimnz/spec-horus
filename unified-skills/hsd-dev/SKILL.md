@@ -1,7 +1,7 @@
 ---
 name: hsd-dev
-description: "⚡ Developer: Discover, define, plan, build, debug, maintain — the full dev cycle"
-version: "4.0.0"
+description: "⚡ Desenvolvedor: Descobrir, definir, planejar, construir, depurar, manter, UI — o ciclo completo de dev"
+version: "4.1.0"
 author: "Horus Spec Driven"
 license: "MIT"
 locale: "pt"
@@ -15,46 +15,23 @@ metadata:
   hermes:
     tags: ["hsd", "dev", "pt"]
     category: "dev"
+    agent: "hsd-dev-agent"
     subcommands: ["discover", "define", "plan", "build", "debug", "maintain", "ui"]
 ---
 
 # ⚡ hsd-dev
 
-**Role:** Developer  
-**Subcommands:** 7
+**Função:** Desenvolvedor
+**Subcomandos:** 7
 
-  ⚡ Hermes  ✅ Claude  ✅ Codex  ✅ Gemini  ✅ Copilot
-
-> Discover, define, plan, build, debug, maintain — the full dev cycle
+> Descobrir, definir, planejar, construir, depurar, manter, UI — o ciclo completo de dev
 
 ---
-
-## Usage
-
-```
-/hsd-dev <subcommand> [args]
-```
-
-`$ARGUMENTS[0]` seleciona o subcomando.
-
----
-
-## Subcommands
-
-| Subcommand | Maps from | Description |
-|---|---|---|
-| `discover` | explore, spike, sketch, capture, ns-ideate, map-codebase, ns-context | Discovery & codebase mapping — explore, prototype, research |
-| `define` | discuss-phase, spec-phase, mvp-phase | Define scope, context, and requirements |
-| `plan` | plan-phase, ultraplan-phase, ai-integration-phase | Create detailed phase plans |
-| `build` | execute-phase, autonomous, quick, fast | Execute plans and build features |
-| `debug` | debug, forensics | Systematic debugging and post-mortem forensics |
-| `maintain` | docs-update, extract-learnings, ingest-docs, import, cleanup | Documentation, learnings, cleanup, and import |
-| `ui` | ui-phase, ui-review | UI design contracts and visual review |
 
 
 ---
 
-## Examples
+## Exemplo Rápido
 
 ```
 //hsd-dev discover
@@ -62,18 +39,50 @@ metadata:
 
 ---
 
-## Runtime Notes
+## Subcomandos
+
+| Subcommand | Mapeia de | Descrição |
+|---|---|---|
+| `discover` | explore, spike, sketch, capture, ns-ideate, map-codebase, ns-context | Descoberta e mapeamento — explorar, prototipar, pesquisar |
+| `define` | discuss-phase, spec-phase, mvp-phase | Definir escopo, contexto e requisitos |
+| `plan` | plan-phase, ultraplan-phase, ai-integration-phase | Criar planos detalhados de fase |
+| `build` | execute-phase, autonomous, quick, fast | Executar planos e construir features |
+| `debug` | debug, forensics | Debug sistemático e análise forense |
+| `maintain` | docs-update, extract-learnings, ingest-docs, import, cleanup | Documentação, aprendizados, limpeza e importação |
+| `ui` | ui-phase, ui-review | Contratos de design UI e revisão visual |
+
+
+
+## Agente
+
+**hsd-dev — Agente Desenvolvedor**
+
+Especializado em descoberta, definição, planejamento e construção de software. Usa explore, spike, sketch, plan-phase e execute-phase como ferramentas principais.
+
+**Ferramentas:** read_file, write_file, terminal, search_files, delegate_task
+
+Este agente é ativado automaticamente ao usar `/hsd-dev`.
+
+
+---
+
+## Uso
+
+```
+/hsd-dev <subcommand> [args]
+```
+`$ARGUMENTS[0]` seleciona o subcomando.
+
+---
+
+## Notas de Runtime
 
 <horus_sdk_adapter runtime="hermes">
-
-Este skill usa o **horus-sdk-adapter** para operações internas (state, config, roadmap, graphify).
+Este skill usa o **horus-sdk-adapter** para operações internas.
 
 `node ~/.hermes/skills/hsd/horus-sdk-adapter/index.cjs <verb> [args] --cwd .`
-
-**Idioma:** Português (Brasil) (pt)
-
 </horus_sdk_adapter>
 
 ---
 
-*Horus Spec Driven v4.0 — Português (Brasil)*
+*Horus Spec Driven v4.1 — Português (Brasil)*

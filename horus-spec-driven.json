@@ -4,25 +4,56 @@
   "description": "Multi-CLI wrapper for gsd-core — 67 commands → 3 roles + config, 4-16 commands per runtime",
   "locale": {
     "code": "pt",
-    "available": ["en", "pt"]
+    "available": [
+      "en",
+      "pt"
+    ]
   },
   "upstream_repo": "https://github.com/open-gsd/gsd-core",
   "upstream_npm": "@opengsd/gsd-core",
   "runtimes": {
-    "hermes": { "enabled": true, "mode": "global", "dest_subpath": "skills/hsd" },
-    "claude": { "enabled": true, "mode": "global" },
-    "codex": { "enabled": true, "mode": "global" },
-    "gemini": { "enabled": true, "mode": "global" },
-    "copilot": { "enabled": false, "mode": "local" }
+    "hermes": {
+      "enabled": true,
+      "mode": "global",
+      "dest_subpath": "skills/hsd"
+    },
+    "claude": {
+      "enabled": true,
+      "mode": "global"
+    },
+    "codex": {
+      "enabled": true,
+      "mode": "global"
+    },
+    "gemini": {
+      "enabled": true,
+      "mode": "global"
+    },
+    "copilot": {
+      "enabled": false,
+      "mode": "local"
+    }
   },
   "unified": {
     "prefix": "hsd",
     "reduction": "67 → 4-16 (conforme runtime)",
     "explanation": "Hermes/Claude: 4 skills com $ARGUMENTS[0]. Codex/Gemini/Copilot: 16 comandos planos (1 por subcomando).",
     "roles": {
-      "dev": { "name": "Developer", "color": "#7c3aed", "description": "Discover, define, plan, build, debug, maintain, ui" },
-      "pm":  { "name": "Project Manager", "color": "#2563eb", "description": "New, track, ship, config, manage" },
-      "qa":  { "name": "QA", "color": "#dc2626", "description": "Validate, audit, review" }
+      "dev": {
+        "name": "Developer",
+        "color": "#7c3aed",
+        "description": "Discover, define, plan, build, debug, maintain, ui"
+      },
+      "pm": {
+        "name": "Project Manager",
+        "color": "#2563eb",
+        "description": "New, track, ship, config, manage"
+      },
+      "qa": {
+        "name": "QA",
+        "color": "#dc2626",
+        "description": "Validate, audit, review"
+      }
     }
   },
   "branding": {
@@ -31,8 +62,11 @@
     "tagline": "Spec-Driven Development — 3 roles, 4-16 commands, 5 platforms"
   },
   "last_install": {
-    "runtimes": ["hermes"],
+    "runtimes": [
+      "hermes"
+    ],
     "mode": "global",
-    "date": "2026-06-05T10:15:05.905Z"
+    "gsd_core_version": "latest",
+    "date": "2026-06-05T12:21:21.240Z"
   }
 }

@@ -116,6 +116,9 @@ function buildWordlist(vendorCommandsDir) {
   if (vendorCommandsDir && fs.existsSync(vendorCommandsDir)) {
     for (const file of fs.readdirSync(vendorCommandsDir)) {
       const name = file.replace(/\.md$/, '');
+      // FILTER: strip commands with levels beyond ultra (wenyan-*, extreme-*, etc.)
+      const STRIP_PATTERNS = /wenyan|extreme|maximum|insane|godmode/i;
+      if (STRIP_PATTERNS.test(name)) continue;
       if (!UNIFIED_MAP[name]) wordlist.set(`gsd-${name}`, 'hsd-pm');
     }
   }
