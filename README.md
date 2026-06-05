@@ -4,7 +4,7 @@
 
 Inspirado e combinado de dois projetos excepcionais:
 
-- **[get-shit-done (GSD)](https://github.com/gsd-build/get-shit-done)** by TÂCHES — Meta-prompting e spec-driven development
+- **[gsd-core)](https://github.com/open-gsd/gsd-core)** by open-gsd — Meta-prompting e spec-driven development
 - **[caveman](https://github.com/JuliusBrussee/caveman)** by JuliusBrussee — Compressão de comunicação (~75% tokens)
 
 ## O que é?
