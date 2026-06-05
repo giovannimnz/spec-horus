@@ -1,12 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-/**
- * build-unified-skills.cjs v2 — Gera 17 SKILL.md unificados e ricos
- * Cada skill contém: frontmatter YAML válido, descrição, tabela de subcomandos,
- * exemplos de uso, e instruções de runtime.
- */
-
 const fs = require('fs');
 const path = require('path');
 
@@ -14,47 +8,64 @@ const ROOT = path.resolve(__dirname, '..');
 const VENDOR_CMDS = path.join(ROOT, 'vendor', 'gsd-core', 'commands', 'gsd');
 const WORDLIST_PATH = path.join(ROOT, 'vendor', 'unified-wordlist.json');
 const OUT_DIR = path.join(ROOT, 'unified-skills');
+const CONFIG_PATH = path.join(ROOT, 'horus-spec-driven.json');
+const LOCALES_DIR = path.join(ROOT, 'locales');
 
 const wordlist = JSON.parse(fs.readFileSync(WORDLIST_PATH, 'utf8'));
 
-const ROLE_INFO = {
-  po: { name: 'Product Owner', icon: '🎯', desc: 'Define WHAT gets built — discovery, scope, requirements' },
-  pm: { name: 'Project Manager', icon: '📋', desc: 'Manage HOW it gets built — plan, execute, track, ship' },
-  front: { name: 'Frontend', icon: '🎨', desc: 'Build the UI — design contracts, visual review' },
-  back: { name: 'Backend', icon: '⚙️', desc: 'Build the logic — debug, maintain, context' },
-  qa: { name: 'QA', icon: '✅', desc: 'Verify everything — validate, audit, review' },
-};
+function getLocale() {
+  const ci = process.argv.indexOf('--locale');
+  if (ci !== -1 && process.argv[ci + 1]) return process.argv[ci + 1];
+  try {
+    const c = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+    return (c.locale && c.locale.code) || 'en';
+  } catch (e) { return 'en'; }
+}
 
-// Group by unified name
+const localeCode = getLocale();
+let localeData;
+try {
+  localeData = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, localeCode + '.json'), 'utf8'));
+} catch (e) {
+  localeData = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, 'en.json'), 'utf8'));
+}
+
+const ROLE_ICONS = { po: '🎯', pm: '📋', front: '🎨', back: '⚙️', qa: '✅' };
+
+function roleInfo(r) {
+  const l = localeData.role[r] || {};
+  return { name: l.name || r.toUpperCase(), icon: ROLE_ICONS[r] || '📌', desc: l.desc || '' };
+}
+
+function verbDesc(n) {
+  const v = n.replace(/^hsd-/, '').replace(/^[a-z]+-/, '');
+  return localeData.verbs[v] || v;
+}
+
 const groups = {};
-for (const [oldKey, newName] of Object.entries(wordlist)) {
-  if (!oldKey.startsWith('gsd-')) continue;
-  const oldName = oldKey.replace(/^gsd-/, '');
-  if (!groups[newName]) groups[newName] = [];
-  if (!groups[newName].includes(oldName)) {
-    groups[newName].push(oldName);
-  }
+for (const [ok, nn] of Object.entries(wordlist)) {
+  if (!ok.startsWith('gsd-')) continue;
+  const on = ok.replace(/^gsd-/, '');
+  if (!groups[nn]) groups[nn] = [];
+  if (!groups[nn].includes(on)) groups[nn].push(on);
 }
 
-// Only valid roles
 const VALID_ROLES = ['po', 'pm', 'front', 'back', 'qa'];
-for (const [name] of Object.entries(groups)) {
-  const parts = name.replace(/^hsd-/, '').split('-');
-  if (!VALID_ROLES.includes(parts[0])) delete groups[name];
+for (const [n] of Object.entries(groups)) {
+  const p = n.replace(/^hsd-/, '').split('-');
+  if (!VALID_ROLES.includes(p[0])) delete groups[n];
 }
 
-// Read original command descriptions from vendor
-function getCmdDesc(cmdName) {
-  const srcFile = path.join(VENDOR_CMDS, `${cmdName}.md`);
-  if (!fs.existsSync(srcFile)) return cmdName;
-  const src = fs.readFileSync(srcFile, 'utf8');
-  const m = src.match(/^description:\s*"?(.+?)"?\s*$/m);
-  return m ? m[1].replace(/"/g, '') : cmdName;
+function gd(c) {
+  const f = path.join(VENDOR_CMDS, c + '.md');
+  if (!fs.existsSync(f)) return c;
+  const s = fs.readFileSync(f, 'utf8');
+  const m = s.match(/^description:\s*"?(.+?)"?\s*$/m);
+  return m ? m[1].replace(/"/g, '') : c;
 }
 
-// Usage examples per role
-const EXAMPLES = {
-  'hsd-po-discover': '/hsd-po-discover explore "auth system design"',
+const EX = {
+  'hsd-po-discover': '/hsd-po-discover explore "auth system"',
   'hsd-po-new': '/hsd-po-new project "my-app"',
   'hsd-po-define': '/hsd-po-define discuss --phase 1',
   'hsd-po-inbox': '/hsd-po-inbox',
@@ -73,107 +84,94 @@ const EXAMPLES = {
   'hsd-qa-review': '/hsd-qa-review code --phase 1',
 };
 
-function buildSkill(unifiedName, commands) {
-  const role = unifiedName.replace(/^hsd-/, '').split('-')[0];
-  const info = ROLE_INFO[role] || { name: role.toUpperCase(), icon: '📌', desc: '' };
-  const verbName = unifiedName.replace(/^hsd-/, '').replace(/^[a-z]+-/, '');
+function buildSkill(un, cmds) {
+  const r = un.replace(/^hsd-/, '').split('-')[0];
+  const inf = roleInfo(r);
+  const vb = un.replace(/^hsd-/, '').replace(/^[a-z]+-/, '');
+  const vd = verbDesc(un);
+  const sc = cmds.map(function(c) { return '"' + c + '"'; }).join(', ');
+  let ct = '';
+  for (const c of cmds) ct += '| `' + c + '` | ' + gd(c) + ' |\n';
+  const ex = EX[un] || '/' + un;
+  const lc = localeCode !== 'en' ? '\n_i18n: ' + localeCode + '_\n' : '';
+  const rn = localeCode !== 'en' ? '**Idioma:** ' + localeData.locale.name : '';
+  return '---\n'
+    + 'name: ' + un + '\n'
+    + 'description: "' + inf.icon + ' ' + inf.name + ': ' + vb + ' — ' + inf.desc + '"\n'
+    + 'version: "3.0.0"\n'
+    + 'author: "Horus Spec Driven"\n'
+    + 'license: "MIT"\n'
+    + 'locale: "' + localeCode + '"\n'
+    + 'platforms:\n  - hermes\n  - claude-code\n  - codex\n  - gemini\n  - copilot\n'
+    + 'metadata:\n  hermes:\n    tags: ["hsd", "' + r + '", "unified", "' + localeCode + '"]\n'
+    + '    category: "' + r + '"\n'
+    + '    subcommands: [' + sc + ']\n'
+    + '---\n\n'
+    + '# ' + inf.icon + ' ' + un + ' ' + lc + '\n\n'
+    + '**Role:** ' + inf.name + '  \n'
+    + '**Verb:** ' + vb + '  \n'
+    + '**Maps from:** ' + cmds.length + ' upstream commands  \n'
+    + '**Description:** ' + inf.desc + '\n\n'
+    + rn + '\n\n---\n\n'
+    + '## Quick Example\n\n```\n' + ex + '\n```\n\n---\n\n'
+    + '## Subcommands\n\n| Subcommand | Description |\n|---|--|\n'
+    + ct
+    + '\n---\n\n## Usage\n```\n/' + un + ' <subcommand> [args]\n```\n\n---\n\n'
+    + '## Runtime Notes\n\n<horus_sdk_adapter runtime="hermes">\n\n'
+    + '**horus-sdk-adapter** handles all internal operations.\n\n'
+    + '`node ~/.hermes/skills/hsd/horus-sdk-adapter/index.cjs <verb> [args] --cwd .`\n\n'
+    + '---\n\n*Horus Spec Driven v3.0.0 — ' + localeData.locale.name + '*\n';
+}
 
-  // Build commands table
-  let cmdTable = '';
-  for (const cmd of commands) {
-    const desc = getCmdDesc(cmd);
-    cmdTable += `| \`${cmd}\` | ${desc} |\n`;
-  }
-
-  const example = EXAMPLES[unifiedName] || `/${unifiedName}`;
-
-  return `---
-name: ${unifiedName}
-description: "${info.icon} ${info.name}: ${verbName} — ${info.desc}"
-version: "3.0.0"
-author: "Horus Spec Driven"
-license: "MIT"
-platforms:
-  - hermes
-  - claude-code
-  - codex
-  - gemini
-  - copilot
-metadata:
-  hermes:
-    tags: ["hsd", "${role}", "unified"]
-    category: "${role}"
-    subcommands: [${commands.map(c => `"${c}"`).join(', ')}]
----
-
-# ${info.icon} ${unifiedName}
-
-**Role:** ${info.name}  
-**Verb:** ${verbName}  
-**Maps from:** ${commands.length} upstream commands  
-**Description:** ${info.desc}
-
----
-
-## Quick Example
-
-\`\`\`
-${example}
-\`\`\`
-
----
-
-## Subcommands
-
-| Subcommand | Description |
-|------------|-------------|
-${cmdTable}
-
----
-
-## Usage
-
-\`\`\`
-/${unifiedName} <subcommand> [args]
-\`\`\`
-
-\`$ARGUMENTS[0]\` selects the subcommand. \`$ARGUMENTS[1..]\` are passed as arguments.
-
----
-
-## Runtime Notes
-
-<horus_sdk_adapter runtime="hermes">
-
-This skill uses the **horus-sdk-adapter** — a native Hermes reimplementation of gsd-tools.cjs.  
-All backend operations (state, config, roadmap, graphify, etc.) are handled by:
-
-\`node ~/.hermes/skills/hsd/horus-sdk-adapter/index.cjs <verb> [args] --cwd .\`
-
-**Graphify:** Code-aware knowledge graph via \`graphifyy.py\` (Python) with file-based fallback.  
-**Agent skills:** Use \`skill_view(name="hsd-<type>")\` to load sub-agents.  
-**Websearch:** Use \`web_search()\` — Hermes built-in with 4 backends.
-
-</horus_sdk_adapter>
-
----
-
-*Generated by Horus Spec Driven v3.0.0 — ${commands.length} upstream commands unified*
-`;
+function buildConfigSkill() {
+  const pt = localeCode === 'pt-BR';
+  const lang = pt ? {
+    name: 'Configura\u00e7\u00e3o',
+    desc: 'Configurar prefer\u00eancias, idioma e modelos do Horus Spec Driven',
+    change: 'Alterar idioma',
+  } : {
+    name: 'Configuration',
+    desc: 'Configure Horus Spec Driven preferences, language, and models',
+    change: 'Change language',
+  };
+  return '---\n'
+    + 'name: hsd-config\n'
+    + 'description: "\u2699\ufe0f ' + lang.name + ' — ' + lang.desc + '"\n'
+    + 'version: "3.0.0"\n'
+    + 'author: "Horus Spec Driven"\n'
+    + 'license: "MIT"\n'
+    + 'locale: "' + localeCode + '"\n'
+    + 'platforms:\n  - hermes\n'
+    + 'metadata:\n  hermes:\n    tags: ["hsd", "config", "' + localeCode + '"]\n    category: "config"\n'
+    + '---\n\n'
+    + '# \u2699\ufe0f hsd-config\n\n'
+    + '**Role:** System  \n'
+    + '**Description:** ' + lang.desc + '\n\n---\n\n'
+    + '## Language\n\n'
+    + (pt ? 'Alterne entre idiomas suportados. As descri\u00e7\u00f5es dos skills s\u00e3o traduzidas automaticamente.' : 'Switch between supported languages.')
+    + '\n\n'
+    + '**Current:** ' + localeData.locale.name + ' (' + localeCode + ')\n'
+    + '**Available:** en (English), pt-BR (Portugu\u00eas)\n\n'
+    + '**' + lang.change + ':**\n\n```\n/hsd-config language <code>\n```\n\n'
+    + (pt ? 'Ao alterar o idioma, os skills ser\u00e3o reconstru\u00eddos e reinstalados automaticamente.' : 'Skills are rebuilt and reinstalled on language change.')
+    + '\n\n---\n\n'
+    + '*Horus Spec Driven v3.0.0 — ' + localeData.locale.name + '*\n';
 }
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
-let totalWritten = 0;
-for (const [unifiedName, commands] of Object.entries(groups).sort()) {
-  const skillDir = path.join(OUT_DIR, unifiedName);
-  if (!fs.existsSync(skillDir)) fs.mkdirSync(skillDir, { recursive: true });
-  const skillContent = buildSkill(unifiedName, commands);
-  fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillContent, 'utf8');
-  totalWritten++;
+let total = 0;
+for (const [un, cmds] of Object.entries(groups).sort()) {
+  const d = path.join(OUT_DIR, un);
+  if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+  fs.writeFileSync(path.join(d, 'SKILL.md'), buildSkill(un, cmds), 'utf8');
+  total++;
 }
 
-console.log(`Generated ${totalWritten} unified SKILL.md files → ${OUT_DIR}/`);
-for (const [name, commands] of Object.entries(groups).sort()) {
-  console.log(`  ${name}: ${commands.length} subcommands`);
-}
+const cd = path.join(OUT_DIR, 'hsd-config');
+if (!fs.existsSync(cd)) fs.mkdirSync(cd, { recursive: true });
+fs.writeFileSync(path.join(cd, 'SKILL.md'), buildConfigSkill(), 'utf8');
+total++;
+
+console.log('Generated ' + total + ' unified SKILL.md files (locale: ' + localeData.locale.name + ') -> ' + OUT_DIR + '/');
+console.log('  ' + Object.keys(groups).length + ' role skills + hsd-config');

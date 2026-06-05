@@ -1,0 +1,56 @@
+{
+  "locale": {
+    "code": "pt-BR",
+    "name": "Português (Brasil)"
+  },
+  "role": {
+    "po": {
+      "name": "Product Owner",
+      "desc": "Define O QUE será construído — descoberta, escopo, requisitos"
+    },
+    "pm": {
+      "name": "Project Manager",
+      "desc": "Gerencia COMO será construído — planejar, executar, acompanhar, entregar"
+    },
+    "front": {
+      "name": "Frontend",
+      "desc": "Constrói a interface — contratos de design, revisão visual"
+    },
+    "back": {
+      "name": "Backend",
+      "desc": "Constrói a lógica — debug, manutenção, contexto"
+    },
+    "qa": {
+      "name": "QA",
+      "desc": "Verifica tudo — validar, auditar, revisar"
+    }
+  },
+  "verbs": {
+    "discover": "Descobrir, prototipar, mapear o código",
+    "new": "Iniciar novo projeto ou milestone",
+    "define": "Definir escopo, contexto e requisitos de uma fase",
+    "inbox": "Triar issues, PRs e itens do backlog",
+    "plan": "Criar planos detalhados de fase",
+    "exec": "Executar planos e rodar tarefas",
+    "track": "Acompanhar progresso, workstreams e métricas",
+    "config": "Configurar preferências, modelos e ajustes",
+    "ship": "Entregar, fazer deploy e completar milestones",
+    "manage": "Pausar, retomar, alternar skills e obter ajuda",
+    "ui": "Gerar contratos de design UI e especificações visuais",
+    "debug": "Debug sistemático e análise forense",
+    "maintain": "Manter docs, aprendizados e artefatos atualizados",
+    "context": "Contexto do código e inteligência de referências",
+    "validate": "Validar fases, verificar implementações, health check",
+    "audit": "Auditar milestones, lacunas de UAT e correções",
+    "review": "Revisão de código, revisão por pares, revisão de segurança"
+  },
+  "config": {
+    "title": "Configuração do Horus Spec Driven",
+    "language_prompt": "Selecione o idioma de exibição",
+    "language_current": "Idioma atual",
+    "language_set": "Idioma definido para",
+    "language_available": "Idiomas disponíveis",
+    "rebuild_needed": "Os skills serão reconstruídos e reinstalados com o novo idioma. Continuar?",
+    "rebuild_done": "Skills reconstruídos e reinstalados com idioma"
+  }
+}

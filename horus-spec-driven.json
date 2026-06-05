@@ -2,6 +2,13 @@
   "project": "horus-spec-driven",
   "version": "3.0.0",
   "description": "Multi-CLI wrapper for gsd-core with role-based unified commands",
+  "locale": {
+    "code": "en",
+    "available": [
+      "en",
+      "pt-BR"
+    ]
+  },
   "upstream_repo": "https://github.com/open-gsd/gsd-core",
   "upstream_npm": "@opengsd/gsd-core",
   "runtimes": {
@@ -52,7 +59,7 @@
         "description": "Build Logic — debug, maintain, context"
       },
       "qa": {
-        "name": "Quality",
+        "name": "QA",
         "color": "#dc2626",
         "description": "Verify — validate, audit, review"
       }
@@ -69,6 +76,6 @@
     ],
     "mode": "global",
     "gsd_core_version": "latest",
-    "date": "2026-06-05T09:11:26.953Z"
+    "date": "2026-06-05T09:49:59.390Z"
   }
 }

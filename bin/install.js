@@ -379,7 +379,8 @@ Usage:
   horus-spec-driven install [options]              Install rebadged gsd-core into runtimes
   horus-spec-driven sync   [options]              Pull latest gsd-core and re-install
   horus-spec-driven detect                          List detected runtimes on this host
-  horus-spec-driven wordlist                        Show the gsd->shd/shq/shp rebrand map
+  horus-spec-driven language <code>                 Switch language (en, pt-BR)
+  horus-spec-driven wordlist                        Show rebrand map
   horus-spec-driven help                            Show this help
 
 install/sync options:
@@ -464,7 +465,17 @@ function parseArgs(argv) {
       opts.configOverrides.CODEX_HOME = a.split('=')[1];
     } else if (a.startsWith('--gemini-config=')) {
       opts.configOverrides.GEMINI_CONFIG_DIR = a.split('=')[1];
+    } else if (a === 'language') {
+      // language command — next arg is locale code
+      opts.command = 'language';
     }
+  }
+  // Also support: language <code> without explicit flag
+  if (opts.command === 'language' && argv.indexOf('language') < argv.length - 1) {
+    opts.localeTarget = argv[argv.indexOf('language') + 1];
+  }
+  if (opts.command === 'language' && !opts.localeTarget) {
+    opts.localeTarget = 'list'; // no code given → list available
   }
   return opts;
 }
@@ -527,12 +538,79 @@ async function cmdSync(opts) {
   return cmdInstall(opts);
 }
 
+// ─── language command ─────────────────────────────────────────────────────
+
+function cmdLanguage(localeTarget) {
+  const configPath = SPEC_HORUS_JSON;
+  const cfg = loadConfig();
+
+  const localesDir = path.join(ROOT, 'locales');
+  const available = fs.readdirSync(localesDir)
+    .filter(f => f.endsWith('.json'))
+    .map(f => f.replace(/\.json$/, ''))
+    .sort();
+
+  if (localeTarget === 'list' || !localeTarget) {
+    const current = cfg.locale?.code || 'en';
+    console.log(`\n  ${C.bold}Language / Idioma${C.reset}`);
+    console.log(`  ${C.dim}Current / Atual:${C.reset} ${current}`);
+    console.log(`  ${C.dim}Available / Disponível:${C.reset}`);
+    for (const loc of available) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(localesDir, `${loc}.json`), 'utf8'));
+        const marker = loc === current ? ' ◄' : '';
+        console.log(`    ${C.green}${loc}${C.reset}  ${data.locale.name}${marker}`);
+      } catch (_) {
+        console.log(`    ${C.yellow}${loc}${C.reset}`);
+      }
+    }
+    console.log(`\n  ${C.dim}Switch: horus-spec-driven language <code>${C.reset}`);
+    console.log(`  ${C.dim}Example: horus-spec-driven language pt-BR${C.reset}\n`);
+    return Promise.resolve();
+  }
+
+  if (!available.includes(localeTarget)) {
+    console.error(`  ${C.red}✗${C.reset} Invalid locale: ${localeTarget}`);
+    console.log(`  ${C.dim}Available: ${available.join(', ')}${C.reset}`);
+    process.exit(1);
+  }
+
+  // Update config
+  cfg.locale = cfg.locale || {};
+  cfg.locale.code = localeTarget;
+  fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
+
+  try {
+    const localeData = JSON.parse(fs.readFileSync(path.join(localesDir, `${localeTarget}.json`), 'utf8'));
+    console.log(`\n  ${C.green}✓${C.reset} Language set to: ${localeData.locale.name} (${localeTarget})\n`);
+
+    // Rebuild unified skills with new locale
+    header('Rebuilding skills with new language');
+    const buildScript = path.join(ROOT, 'bin', 'build-unified-skills.cjs');
+    const buildResult = execSync(`node "${buildScript}" --locale ${localeTarget}`, {
+      timeout: 30000, cwd: ROOT,
+    });
+    console.log(buildResult.toString());
+
+    // Reinstall
+    header('Reinstalling skills');
+    const opts = parseArgs(['install', '--runtime=hermes', '--global', '--no-vendor-pull']);
+    return cmdInstall(opts);
+  } catch (e) {
+    console.error(`  ${C.red}✗${C.reset} Language switch failed: ${e.message}`);
+    process.exit(1);
+  }
+}
+
 function main() {
   const args = process.argv.slice(2);
   const opts = parseArgs(args);
   if (!opts.command || opts.command === 'help') {
     cmdHelp();
     return Promise.resolve();
+  }
+  if (opts.command === 'language') {
+    return cmdLanguage(opts.localeTarget);
   }
   switch (opts.command) {
     case 'detect': cmdDetect(); return Promise.resolve();

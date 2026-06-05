@@ -1,0 +1,56 @@
+{
+  "locale": {
+    "code": "en",
+    "name": "English"
+  },
+  "role": {
+    "po": {
+      "name": "Product Owner",
+      "desc": "Define WHAT gets built — discovery, scope, requirements"
+    },
+    "pm": {
+      "name": "Project Manager",
+      "desc": "Manage HOW it gets built — plan, execute, track, ship"
+    },
+    "front": {
+      "name": "Frontend",
+      "desc": "Build the UI — design contracts, visual review"
+    },
+    "back": {
+      "name": "Backend",
+      "desc": "Build the logic — debug, maintain, context"
+    },
+    "qa": {
+      "name": "QA",
+      "desc": "Verify everything — validate, audit, review"
+    }
+  },
+  "verbs": {
+    "discover": "Discover, prototype, map the codebase",
+    "new": "Start a new project or milestone",
+    "define": "Define scope, context, and requirements for a phase",
+    "inbox": "Triage issues, PRs, and backlog items",
+    "plan": "Create detailed phase plans",
+    "exec": "Execute plans and run tasks",
+    "track": "Track progress, workstreams, and metrics",
+    "config": "Configure preferences, models, and settings",
+    "ship": "Release, deploy, and complete milestones",
+    "manage": "Pause, resume, toggle skills, and get help",
+    "ui": "Generate UI design contracts and visual specs",
+    "debug": "Debug systematically and run forensics",
+    "maintain": "Keep docs, learnings, and artifacts up to date",
+    "context": "Codebase context and reference intelligence",
+    "validate": "Validate phases, verify implementations, run health checks",
+    "audit": "Audit milestones, UAT gaps, and fixes",
+    "review": "Code review, peer review, security review, backlog review"
+  },
+  "config": {
+    "title": "Horus Spec Driven Configuration",
+    "language_prompt": "Select display language",
+    "language_current": "Current language",
+    "language_set": "Language set to",
+    "language_available": "Available languages",
+    "rebuild_needed": "Skills will be rebuilt and reinstalled with the new language. Continue?",
+    "rebuild_done": "Skills rebuilt and reinstalled with language"
+  }
+}
