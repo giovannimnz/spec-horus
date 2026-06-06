@@ -114,7 +114,7 @@ Plans:
 - Vault location: `~/GitHub/obsidian-vault/ideaverse/`
 - Verification: `ls ~/GitHub/obsidian-vault/ideaverse/30-RECURSOS/osd-pi-bridge.md` existe
 
-### [ ] **Phase 4: Test `osd-pi-bridge` with real gsd-pi install**
+### [x] **Phase 4: Test `osd-pi-bridge` with real gsd-pi install** — ✅ COMPLETE w/ CAVEAT (2026-06-06)
 
 - Tentar `npm install -g @opengsd/gsd-pi` (ou `npx gsd-pi`)
 - Documentar resultado do teste (sucesso, fallback, erro)
