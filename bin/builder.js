@@ -373,7 +373,7 @@ set -euo pipefail
 HD=${hermesHome}/skills/hsd
 AD=${hermesHome}/agents
 echo "Installing HSD v5.0 for Hermes Agent..."
-mkdir -p "$HD" "$AD"
+mkdir -p "$HD" "$AD" "$HD/horus-sdk-hermes"
 cp -r dist/hermes/skills/hsd/* "$HD/"
 cp dist/hermes/agents/*.md "$AD/" 2>/dev/null || true
 cp -r dist/hermes/adapter/* "$HD/horus-sdk-hermes/" 2>/dev/null || true
@@ -386,8 +386,8 @@ set -euo pipefail
 SD=${claudeHome}/skills
 echo "Installing HSD v5.0 for Claude Code..."
 mkdir -p "$SD"
-cp dist/claude/skills/*.md "$SD/"
-echo "✓ $(ls dist/claude/skills/ | wc -l) skills installed"
+cp -r dist/claude/skills/hsd/* "$SD/"
+echo "✓ $(find dist/claude/skills/hsd -mindepth 1 -maxdepth 1 -type d | wc -l) skills installed"
 `,
     codex: `#!/usr/bin/env bash
 # Horus Spec Driven — Codex CLI Installer v5.0
@@ -425,10 +425,10 @@ echo "✓ $(ls dist/copilot/prompts/ | wc -l) prompts installed"
 function buildRuntimeReadme(runtime) {
   const rt = {
     hermes: { name: 'Hermes Agent', dest: '~/.hermes/skills/hsd/', format: 'SKILL.md (nested)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
-    claude: { name: 'Claude Code', dest: '~/.claude/skills/', format: 'SKILL.md (flat)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
-    codex: { name: 'OpenAI Codex', dest: '~/.codex/prompts/', format: 'prompt.md', count: '16', cmds: 'hsd-pm-new ... hsd-qa-review' },
-    gemini: { name: 'Google Gemini CLI', dest: '~/.gemini/commands/hsd/', format: '.toml', count: '16', cmds: '/hsd-pm:new ... /hsd-qa:review' },
-    copilot: { name: 'GitHub Copilot', dest: '.github/prompts/', format: 'copilot-instructions.md', count: '16', cmds: 'hsd-pm-new ... hsd-qa-review' },
+    claude: { name: 'Claude Code', dest: '~/.claude/skills/', format: 'SKILL.md (nested dirs under skills/hsd/)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
+    codex: { name: 'OpenAI Codex', dest: '~/.codex/prompts/', format: 'prompt.md', count: '15', cmds: 'hsd-pm-new ... hsd-qa-review' },
+    gemini: { name: 'Google Gemini CLI', dest: '~/.gemini/commands/hsd/', format: '.toml', count: '15', cmds: '/hsd-pm:new ... /hsd-qa:review' },
+    copilot: { name: 'GitHub Copilot', dest: '.github/prompts/', format: 'prompt.md', count: '15', cmds: 'hsd-pm-new ... hsd-qa-review' },
   }[runtime] || { name: runtime, dest: '—', format: '—', count: '0', cmds: '' };
 
   const extraNotes = runtime === 'hermes'

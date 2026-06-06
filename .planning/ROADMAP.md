@@ -46,13 +46,12 @@ Success criteria:
 2. `install.js detect` retorna runtimes suportados corretamente
 3. Tests cobrem runtime path resolution e install target shape
 
-### [ ] **Phase 10: Runtime validation matrix**
+### [x] **Phase 10: Runtime validation matrix** — ✅ COMPLETE (2026-06-06)
 
 **Goal:** Validar os 5 pacotes gerados por runtime e consolidar uma matrix de status.
 
 Requirements: RT-01, RT-02, RT-03, RT-04
 Success criteria:
-
 1. Hermes e Claude têm install smoke end-to-end documentado
 2. Codex/Gemini/Copilot têm filenames/layout smoke documentado
 3. Existe matrix markdown com install / detect / smoke / caveats por runtime

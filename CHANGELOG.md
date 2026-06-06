@@ -7,9 +7,9 @@
 - Cada CLI recebe sua própria pasta em `dist/<runtime>/` com tudo self-contained:
   - `dist/hermes/` — 4 SKILL.md nested + agents/ + horus-sdk-hermes + install.sh (24 files)
   - `dist/claude/` — 4 SKILL.md flat + agents/ + install.sh (9 files)
-  - `dist/codex/` — 16 prompts/ + agents/ + install.sh (20 files)
-  - `dist/gemini/` — 16 commands .toml + agents/ + install.sh (20 files)
-  - `dist/copilot/` — 16 prompts/ + agents/ + install.sh (20 files)
+  - `dist/codex/` — 15 prompts/ + agents/ + install.sh (20 files)
+  - `dist/gemini/` — 15 commands .toml + agents/ + install.sh (20 files)
+  - `dist/copilot/` — 15 prompts/ + agents/ + install.sh (20 files)
 - **Total: 93 arquivos, 5 pacotes independentes** gerados por `node bin/builder.js --all`
 - Builder único (`bin/builder.js`) aplica uma vez: rebrand → content converters → frontmatter converters → subagent adapter → i18n
 - `dist/` é gerado, nunca editado manualmente — commitado no repo pra release

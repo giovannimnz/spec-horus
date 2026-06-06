@@ -69,7 +69,7 @@ open-gsd/gsd-core (67 comandos)
          │
          ▼
   Hermes  Claude  Codex  Gemini  Copilot
-  4 cmds  4 cmds  16 cmd  16 cmd  16 cmd
+  4 cmds  4 cmds  15 cmd  15 cmd  15 cmd
 ```
 
 ---

@@ -1,6 +1,6 @@
 version: "4.0.0"
-reduction: "67 → 4-16 (conforme runtime)"
-detail: "Hermes/Claude: 4 skills com $ARGUMENTS[0]. Codex/Gemini/Copilot: 16 comandos planos."
+reduction: "67 → 4-15 (conforme runtime)"
+detail: "Hermes/Claude: 4 skills com $ARGUMENTS[0]. Codex/Gemini/Copilot: 15 comandos planos."
 roles: 3
 
 dev:

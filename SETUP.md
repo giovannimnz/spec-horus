@@ -94,7 +94,7 @@ node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify query "function" -
 ├── hsd-pm-new.md
 ├── hsd-dev-discover.md
 ├── hsd-qa-validate.md
-└── ...  (16 total: 5 PM + 7 DEV + 3 QA + 1 config)
+└── ...  (15 total: 5 PM + 7 DEV + 3 QA + 1 config)
 ```
 
 ### Gemini
@@ -104,7 +104,7 @@ node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify query "function" -
 ├── hsd-pm:new.toml
 ├── hsd-dev:discover.toml
 ├── hsd-qa:validate.toml
-└── ...  (16 total)
+└── ...  (15 total)
 ```
 
 ### Copilot
@@ -114,7 +114,7 @@ node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify query "function" -
 ├── hsd-pm-new.md
 ├── hsd-dev-discover.md
 ├── hsd-qa-validate.md
-└── ...  (16 total)
+└── ...  (15 total)
 ```
 
 ## Local Skills (v5.1+, omni-spec-driven only)

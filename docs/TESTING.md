@@ -24,13 +24,17 @@ Contains:
 npm test
 ```
 
-Current coverage (Phase 7 baseline):
+Current coverage (Phase 7 baseline, expanded by Phase 8-10):
 - fixture presence
 - SDK `state load`
 - SDK `graphify build`
+- SDK smoke verbs (`config-get`, `roadmap`, `validate`, `frontmatter.*`, `phase.mvp-mode`)
+- runtime install smoke (Hermes/Claude/Codex/Gemini/Copilot)
 
-## Next phases
+## Test runner note
 
-- Phase 8: expand SDK smoke tests (`config-get`, `roadmap`, `validate`, `frontmatter.get`)
-- Phase 9: smoke tests for `builder.js` and `install.js`
-- Phase 10: runtime validation matrix for Hermes/Claude/Codex/Gemini/Copilot
+The suite runs with `--test-concurrency=1`.
+
+Reason: some tests intentionally regenerate `dist/` (`builder --all`) while others
+consume those generated artifacts (`install.sh`). Running them in parallel causes
+race conditions and flaky false negatives.
