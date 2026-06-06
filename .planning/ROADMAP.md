@@ -16,13 +16,12 @@
 
 ## Phase Details
 
-### [ ] **Phase 7: Test harness + fixtures**
+### [x] **Phase 7: Test harness + fixtures** — ✅ COMPLETE (2026-06-06)
 
 **Goal:** Criar fixtures mínimas e scripts base para testar builder/install/SDK sem depender do repo real.
 
 Requirements: TEST-01
 Success criteria:
-
 1. Existe fixture repo mínima em `.planning/fixtures/` ou `tests/fixtures/`
 2. Build e SDK conseguem rodar contra fixture sem quebrar paths
 3. Docs explicam como executar a fixture localmente

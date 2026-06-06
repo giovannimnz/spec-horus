@@ -8,6 +8,7 @@
   "scripts": {
     "detect": "node bin/install.js detect",
     "wordlist": "node bin/install.js wordlist",
+    "test": "node --test tests/*.test.js",
     "build": "node bin/builder.js --all",
     "build:hermes": "node bin/builder.js --runtime=hermes",
     "build:claude": "node bin/builder.js --runtime=claude",

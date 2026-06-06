@@ -1,0 +1,12 @@
+{
+  "commit_docs": true,
+  "workflow": {
+    "skip_discuss": false,
+    "ui_phase": true,
+    "ui_review": true,
+    "code_review": true,
+    "text_mode": false,
+    "nyquist_validation": true,
+    "ai_integration_phase": true
+  }
+}
