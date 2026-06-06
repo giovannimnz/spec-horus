@@ -94,7 +94,7 @@ Plans:
 
 ## Phase Details
 
-### [ ] **Phase 1: Discard rebrand — keep horus-spec-driven as canonical**
+### [x] **Phase 1: Discard rebrand — keep horus-spec-driven as canonical** — ✅ COMPLETE (2026-06-06)
 
 - Confirmar decisão: `horus-spec-driven` é o nome canônico deste repo
 - Rebrand v5.1 já foi feito em repo separado (`giovannimnz/omni-spec-driven`)
