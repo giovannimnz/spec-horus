@@ -5,11 +5,27 @@
 **Stack:** Node.js 18+ (CJS), no npm deps at runtime
 **Upstream:** open-gsd/gsd-core (vendored via `modules/`)
 
-## What it is
+## What This Is
 
 Wrapper around `@opengsd/gsd-core` (67 gsd-* commands) that unifies everything
 into 3 roles + config (4 SKILL.md for Hermes/Claude, 16 flat commands for
 Codex/Gemini/Copilot). Dist/ is generated per-runtime by `bin/builder.js`.
+
+## Core Value
+
+- **One source, five runtimes** — write spec-driven workflow once, ship to
+  Hermes Agent, Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot
+- **Compact namespace** — 67 commands unified into 4 slash commands (or 16
+  flat for CLIs that don't support `$ARGUMENTS[0]` routing)
+- **Zero runtime deps** — pure Node.js + Python stdlib; no npm install needed
+  for the wrapper itself (only for upstream `gsd-core` if vendored)
+
+## Requirements
+
+- Node.js ≥ 18 (engine: `>=18.0.0`)
+- Python 3.8+ (for `graphifyy.py` code-aware scanner)
+- Git (vendoring gsd-core as submodule)
+- Optional: PM2 (auto-sync cron)
 
 ## Current state (as of 2026-06-05)
 
@@ -29,4 +45,11 @@ Codex/Gemini/Copilot). Dist/ is generated per-runtime by `bin/builder.js`.
 
 ## Active milestone
 
-→ v5.1.0 — see `.planning/ROADMAP.md`
+→ v5.1.0 — Documentation & Vault Alignment (✅ COMPLETE 2026-06-06, 6/6 phases)
+→ Next: v5.2.0 (TBD) or feature work
+
+## Out of Scope
+
+- Implementing `modules/skills/<name>/` hook v5.1 in this legacy repo
+  (lives in `giovannimnz/omni-spec-driven`)
+- Rebrand to `omni-spec-driven` (D-1.1: separate repos)
