@@ -1,5 +1,22 @@
 # Changelog
 
+## v5.0.0 — 2026-06-05
+
+### dist/ por Runtime com Builder Único (BREAKING)
+
+- Cada CLI recebe sua própria pasta em `dist/<runtime>/` com tudo self-contained:
+  - `dist/hermes/` — 4 SKILL.md nested + agents/ + horus-sdk-hermes + install.sh (24 files)
+  - `dist/claude/` — 4 SKILL.md flat + agents/ + install.sh (9 files)
+  - `dist/codex/` — 16 prompts/ + agents/ + install.sh (20 files)
+  - `dist/gemini/` — 16 commands .toml + agents/ + install.sh (20 files)
+  - `dist/copilot/` — 16 prompts/ + agents/ + install.sh (20 files)
+- **Total: 93 arquivos, 5 pacotes independentes** gerados por `node bin/builder.js --all`
+- Builder único (`bin/builder.js`) aplica uma vez: rebrand → content converters → frontmatter converters → subagent adapter → i18n
+- `dist/` é gerado, nunca editado manualmente — commitado no repo pra release
+- Cada `dist/<runtime>/install.sh` é self-contained: `SCRIPT_DIR` resolve paths relativos, roda sem o repo inteiro
+- Upstream filter no rebrand: remove comandos com nível > ultra (wenyan-*, extreme-*, insane-*, godmode-*)
+- Decisões detalhadas em `21.06-Decisoes-v5` (D-16 → D-20) e no vault
+
 ## v4.1.0 — 2026-06-05
 
 ### Auto-Detect + Agents + Compression

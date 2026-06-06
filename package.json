@@ -1,21 +1,27 @@
 {
   "name": "horus-spec-driven",
-  "version": "3.0.0",
-  "description": "Horus Spec Driven — multi-CLI wrapper around @opengsd/gsd-core with role-based unified commands (67→17) and horus-sdk-hermes. Supports Hermes, Claude Code, Codex, Gemini CLI, and GitHub Copilot.",
+  "version": "4.1.0",
+  "description": "Horus Spec Driven — multi-CLI wrapper around @opengsd/gsd-core with role-based unified commands (67→3+config) and per-runtime horus-sdk-<runtime>. Supports Hermes, Claude Code, Codex, Gemini CLI, and GitHub Copilot. Each runtime gets its own dist/<runtime>/ package.",
   "bin": {
     "hsd": "bin/install.js"
   },
   "scripts": {
     "detect": "node bin/install.js detect",
     "wordlist": "node bin/install.js wordlist",
+    "build": "node bin/builder.js --all",
+    "build:hermes": "node bin/builder.js --runtime=hermes",
+    "build:claude": "node bin/builder.js --runtime=claude",
+    "build:codex": "node bin/builder.js --runtime=codex",
+    "build:gemini": "node bin/builder.js --runtime=gemini",
+    "build:copilot": "node bin/builder.js --runtime=copilot",
     "install": "node bin/install.js install --all --global",
-    "sync": "node bin/install.js sync",
-    "unified": "node bin/rebrand.js modules/unified-wordlist.json && node bin/build-unified-skills.cjs",
     "install:hermes": "node bin/install.js install --runtime=hermes --global",
     "install:claude": "node bin/install.js install --runtime=claude --global",
     "install:codex": "node bin/install.js install --runtime=codex --global",
     "install:gemini": "node bin/install.js install --runtime=gemini --global",
-    "install:copilot": "node bin/install.js install --runtime=copilot --local"
+    "install:copilot": "node bin/install.js install --runtime=copilot --local",
+    "sync": "node bin/install.js sync",
+    "unified": "node bin/rebrand.js modules/unified-wordlist.json && node bin/build-unified-skills.cjs"
   },
   "engines": {
     "node": ">=18.0.0"
