@@ -56,13 +56,12 @@ Success criteria:
 2. Codex/Gemini/Copilot têm filenames/layout smoke documentado
 3. Existe matrix markdown com install / detect / smoke / caveats por runtime
 
-### [ ] **Phase 11: Expansion guide for new CLI runtimes**
+### [x] **Phase 11: Expansion guide for new CLI runtimes** — ✅ COMPLETE (2026-06-06)
 
 **Goal:** Formalizar como estudar e adicionar novos CLIs ao wrapper.
 
 Requirements: EXP-01, EXP-02
 Success criteria:
-
 1. Existe doc com checklist para novo runtime
 2. Critérios de suporte estão explícitos (converter, frontmatter, install, smoke)
 3. Próximos candidatos de runtime estão listados com trade-offs
