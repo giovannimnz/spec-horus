@@ -27,12 +27,14 @@ Codex/Gemini/Copilot). Dist/ is generated per-runtime by `bin/builder.js`.
 - Git (vendoring gsd-core as submodule)
 - Optional: PM2 (auto-sync cron)
 
-## Current state (as of 2026-06-05)
+## Current state (as of 2026-06-06)
 
-- v4.1.0 package + v5.0.0 CHANGELOG (commit 1593cc5, pushed)
+- v4.1.0 package + v5.0.0 CHANGELOG (commit 1593cc5, pushed on master)
 - `dist/{hermes,claude,codex,gemini,copilot}/` generated (93 files)
-- `bin/lib/horus-sdk-hermes/` (31 verbs + graphifyy.py) — Hermes SDK
+- `bin/lib/horus-sdk-hermes/` (31 verbos + graphifyy.py) — Hermes SDK
 - Unified skills in `unified-skills/` (4 files: hsd-pm, hsd-dev, hsd-qa, hsd-config)
+- Milestone `v5.1.0` complete and archived in `gsd-bootstrap`
+- Main gap agora: falta de testes automatizados e smoke validation por runtime
 - Vault docs: 21.01–21.06 in `~/GitHub/obsidian-vault/ideaverse/20-PROJETOS/21-PROJETOS-ATIVOS/horus-spec-driven/`
 
 ## Constraints
@@ -45,8 +47,8 @@ Codex/Gemini/Copilot). Dist/ is generated per-runtime by `bin/builder.js`.
 
 ## Active milestone
 
-→ v5.1.0 — Documentation & Vault Alignment (✅ COMPLETE 2026-06-06, 6/6 phases)
-→ Next: v5.2.0 (TBD) or feature work
+→ v5.2.0 — Test Coverage & Runtime Validation (planning)
+→ Previous: v5.1.0 — Documentation & Vault Alignment (✅ COMPLETE 2026-06-06, 6/6 phases)
 
 ## Out of Scope
 

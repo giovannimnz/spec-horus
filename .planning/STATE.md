@@ -1,21 +1,21 @@
 ---
 gsd_state_version: 1.0
-milestone: v5.1.0
-milestone_name: — Documentation & Vault Alignment
-status: Awaiting next milestone
-last_updated: "2026-06-06T06:16:21.666Z"
-last_activity: 2026-06-06 — Milestone v5.1.0 completed and archived
+milestone: v5.2.0
+milestone_name: — Test Coverage & Runtime Validation
+status: planning
+last_updated: "2026-06-06T00:00:00.000Z"
+last_activity: 2026-06-06 — Milestone v5.2.0 started
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # State
 
-**Milestone:** v5.1.0
+**Milestone:** v5.2.0
 **Started:** 2026-06-06
 **Last updated:** 2026-06-06
 
@@ -23,37 +23,30 @@ progress:
 
 | # | Phase | Status | Commit |
 |---|-------|--------|--------|
-| 1 | Apply rebrand leftovers (horus→horus is canonical) | Not Started | — |
-| 2 | SETUP.md — document modules/skills/ hook v5.1 | Not Started | — |
-| 3 | Vault — atomic note about osd-pi-bridge pattern | Not Started | — |
-| 4 | Test osd-pi-bridge with real gsd-pi install | Not Started | — |
-| 5 | Vault 21.06 — formalize D-20 with omni-sdk-hermes | Not Started | — |
-| 6 | README — align with v4.1.0 (badge, npm run build) | Not Started | — |
+| 7 | Test harness + fixtures | Not Started | — |
+| 8 | Hermes SDK smoke tests | Not Started | — |
+| 9 | Builder + install smoke tests | Not Started | — |
+| 10 | Runtime validation matrix | Not Started | — |
+| 11 | Expansion guide for new CLI runtimes | Not Started | — |
 
 ## Blockers/Concerns
 
 None.
 
-## Decisions registered
+## Decisions carried forward
 
-- **D-1.1 (2026-06-06, Phase 1):** `horus-spec-driven` permanece o nome canônico.
-  Rebrand v5.1 vive em `giovannimnz/omni-spec-driven` (repo público separado).
-  Não duplicar rebrand aqui.
-
-- **D-1.2:** SDK naming segue `horus-sdk-<runtime>` neste repo (não `omni-sdk-*`).
-- **D-1.3:** Phase 3 (vault) deve referenciar cross-repo.
-
-## Decisions deferred
-
-None — Phase 1 unblocked.
+- **D-1.1:** `horus-spec-driven` permanece o nome canônico.
+- **D-1.2:** SDK naming segue `horus-sdk-<runtime>`.
+- **D-4.1:** `osd-pi-bridge` runtime install continua caveat externo; não é parte deste repo.
 
 ## Current Position
 
-Phase: Milestone v5.1.0 complete
+Phase: Not started (defining tests)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-06-06 — Milestone v5.1.0 completed and archived
+Status: Planning test coverage and runtime validation
+Last activity: 2026-06-06 — Milestone v5.2.0 started
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Phase 7 — create fixtures and test harness
+- Then Phase 8/9 in parallel potential, same fixture base

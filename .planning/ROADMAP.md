@@ -1,139 +1,127 @@
 # Roadmap
 
-## Milestone v5.1.0 — Documentation & Vault Alignment
+## Milestone v5.2.0 — Test Coverage & Runtime Validation
 
-**Goal:** Sincronizar documentação do repo + vault com o estado real pós-v5.0.0.
-Sem novas features — só alinhamento.
+**Goal:** Provar que o `horus-spec-driven` gera artefatos corretos, instaláveis e verificáveis para os 5 CLIs suportados, e formalizar o caminho para estudar/expandir para novos runtimes.
 
 ### ⚡ EXECUTION ORDER (2026-06-06)
 
-🔴 1. **Phase 1 — Discard rebrand (legacy stays `horus-spec-driven`)**
-   ← FIRST (reason: define o nome canônico; tudo depois referencia "horus")
-🟡 2. **Phase 2 — SETUP.md: documentar `modules/skills/` hook v5.1**
-   ← depends on #1 (docs reference o nome final)
-🟡 3. **Phase 3 — Vault: nota atômica `osd-pi-bridge`**
-   ← independent, can run in parallel com #2
-🟢 4. **Phase 4 — Testar `osd-pi-bridge` com gsd-pi real**
-   ← depends on #3 (precisa da nota atômica criada)
-🟢 5. **Phase 5 — Vault 21.06: D-20 com `omni-sdk-hermes`**
-   ← independent, doc-only
-🟢 6. **Phase 6 — README: alinhar com v4.1.0**
-   ← LAST (precisa do badge + npm scripts consolidados)
+🔴 7. **Phase 7 — Test harness + fixtures** ← FIRST (reason: todas as outras fases dependem de fixtures e comandos reproduzíveis)
+🟡 8. **Phase 8 — Hermes SDK smoke tests** ← DEPENDS on #7 (mesma base de fixtures e `.planning/` fake)
+🟡 9. **Phase 9 — Builder + install smoke tests** ← DEPENDS on #7 (mesma fixture de repo e paths)
+🟡 10. **Phase 10 — Runtime validation matrix (Hermes/Claude/Codex/Gemini/Copilot)** ← DEPENDS on #9 (precisa dos artefatos gerados e install scripts validados)
+🟢 11. **Phase 11 — Expansion guide for new CLI runtimes** ← LAST (precisa dos aprendizados reais das fases 8-10)
 
-**Porquê esta ordem:** Phase 1 fixa o nome canônico antes de qualquer doc nova.
-Phase 6 (README) vem por último porque consolida tudo. Phases 2/3/5 são
-paralelas (docs); Phase 4 (teste) precisa da nota atômica pra referenciar.
-
-### Phase 1: Discard rebrand — keep horus-spec-driven canonical
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 0
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 1 to break down)
-
-### Phase 2: SETUP.md — document modules/skills/ hook v5.1
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 1
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 2 to break down)
-
-### Phase 3: Vault — atomic note about osd-pi-bridge
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 2
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 3 to break down)
-
-### Phase 4: Test osd-pi-bridge with real gsd-pi install
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 3
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 4 to break down)
-
-### Phase 5: Vault 21.06 — formalize D-20 SDK naming
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 4
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 5 to break down)
-
-### Phase 6: README — align with v4.1.0
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 5
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD (run /gsd-plan-phase 6 to break down)
-
----
+**Porquê esta ordem:** Phase 7 cria a base de teste. Phases 8 e 9 usam a mesma infraestrutura e geram evidência real. Phase 10 consolida os resultados por runtime. Phase 11 só faz sentido depois que o comportamento atual estiver observado e documentado.
 
 ## Phase Details
 
-### [x] **Phase 1: Discard rebrand — keep horus-spec-driven as canonical** — ✅ COMPLETE (2026-06-06)
+### [ ] **Phase 7: Test harness + fixtures**
 
-- Confirmar decisão: `horus-spec-driven` é o nome canônico deste repo
-- Rebrand v5.1 já foi feito em repo separado (`giovannimnz/omni-spec-driven`)
-- Nenhuma mudança de código esperada — só commit de decisão
-- Verification: `git log --oneline -1` mostra commit "docs: rebrand descartado..."
+**Goal:** Criar fixtures mínimas e scripts base para testar builder/install/SDK sem depender do repo real.
 
-### [x] **Phase 2: SETUP.md — document `modules/skills/` hook v5.1** — ✅ COMPLETE (2026-06-06)
+Requirements: TEST-01
+Success criteria:
 
-- Adicionar seção sobre hook de auto-instalação de skills locais
-- Path: `modules/skills/<name>/SKILL.md` → `~/.hermes/skills/<prefix>/<name>/`
-- Verification: `grep -A 5 "modules/skills" SETUP.md` retorna a nova seção
+1. Existe fixture repo mínima em `.planning/fixtures/` ou `tests/fixtures/`
+2. Build e SDK conseguem rodar contra fixture sem quebrar paths
+3. Docs explicam como executar a fixture localmente
 
-### [x] **Phase 3: Vault — atomic note about osd-pi-bridge** — ✅ COMPLETE (2026-06-06)
+### [ ] **Phase 8: Hermes SDK smoke tests**
 
-- Criar `30-RECURSOS/osd-pi-bridge.md` (nota atômica Zettelkasten)
-- Conteúdo: o que faz, quando usar, fallback chain, link para log 2026-06-05
-- Vault location: `~/GitHub/obsidian-vault/ideaverse/`
-- Verification: `ls ~/GitHub/obsidian-vault/ideaverse/30-RECURSOS/osd-pi-bridge.md` existe
+**Goal:** Cobrir os verbos críticos do `horus-sdk-hermes` e seus modos de erro.
 
-### [x] **Phase 4: Test `osd-pi-bridge` with real gsd-pi install** — ✅ COMPLETE w/ CAVEAT (2026-06-06)
+Requirements: SDK-01, SDK-02
+Success criteria:
 
-- Tentar `npm install -g @opengsd/gsd-pi` (ou `npx gsd-pi`)
-- Documentar resultado do teste (sucesso, fallback, erro)
-- Se funcionar: smoke test do bridge
-- Verification: log de teste em `60-LOGS/2026-06-06-osd-pi-bridge-test.md`
+1. `state`, `config-get`, `roadmap`, `validate`, `graphify` têm smoke tests automatizados
+2. `frontmatter.get` e `frontmatter.validate` têm smoke tests explícitos
+3. Saídas erradas têm mensagens úteis e previsíveis
 
-### [x] **Phase 5: Vault 21.06 — formalize D-20 SDK naming** — ✅ COMPLETE (2026-06-06)
+### [ ] **Phase 9: Builder + install smoke tests**
 
-- Atualizar `21.06-Decisoes-v5.md` → D-20: SDK personalizado
-- Trocar `horus-sdk-hermes` (que é o nome local) por `omni-sdk-hermes` (convenção)
-  — ou manter `horus-sdk-hermes` se convenção deste repo é essa
-- Decisão: como o repo é `horus-spec-driven` legacy, MANTER `horus-sdk-hermes`
-- Adicionar nota: "outro repo (omni-spec-driven) usa convenção `omni-sdk-<runtime>`"
-- Verification: diff mostra atualização em 21.06 + nota cross-repo
+**Goal:** Validar `bin/builder.js` e `bin/install.js` com smoke tests automatizados.
 
-### [x] **Phase 6: README — align with v4.1.0** — ✅ COMPLETE (2026-06-06)
+Requirements: TEST-02, TEST-03
+Success criteria:
 
-- Badge de versão: já diz 4.1.0 ✓
-- Build/install: README v4.1 mostra `node bin/builder.js --all` ✓
-- Adicionar `npm run build` no quick start
-- Verificar consistência com CHANGELOG v5.0.0
-- Verification: `grep -n "npm run build" README.md` retorna matches
+1. `npm run build` valida geração de `dist/` para 5 runtimes
+2. `install.js detect` retorna runtimes suportados corretamente
+3. Tests cobrem runtime path resolution e install target shape
+
+### [ ] **Phase 10: Runtime validation matrix**
+
+**Goal:** Validar os 5 pacotes gerados por runtime e consolidar uma matrix de status.
+
+Requirements: RT-01, RT-02, RT-03, RT-04
+Success criteria:
+
+1. Hermes e Claude têm install smoke end-to-end documentado
+2. Codex/Gemini/Copilot têm filenames/layout smoke documentado
+3. Existe matrix markdown com install / detect / smoke / caveats por runtime
+
+### [ ] **Phase 11: Expansion guide for new CLI runtimes**
+
+**Goal:** Formalizar como estudar e adicionar novos CLIs ao wrapper.
+
+Requirements: EXP-01, EXP-02
+Success criteria:
+
+1. Existe doc com checklist para novo runtime
+2. Critérios de suporte estão explícitos (converter, frontmatter, install, smoke)
+3. Próximos candidatos de runtime estão listados com trade-offs
+
+### Phase 7: Test harness + fixtures
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 6
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 7 to break down)
+
+### Phase 8: Hermes SDK smoke tests
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 7
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 8 to break down)
+
+### Phase 9: Builder + install smoke tests
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 8
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 9 to break down)
+
+### Phase 10: Runtime validation matrix
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 9
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 10 to break down)
+
+### Phase 11: Expansion guide for new CLI runtimes
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 10
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 11 to break down)
