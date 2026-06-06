@@ -2,7 +2,7 @@
 
 **Package:** dist/codex/
 **Version:** 5.0.0
-**Commands:** 16 (hsd-pm-new ... hsd-qa-review)
+**Commands:** 15 (hsd-pm-new ... hsd-qa-review)
 **Format:** prompt.md
 **Install to:** ~/.codex/prompts/
 

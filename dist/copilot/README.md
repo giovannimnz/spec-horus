@@ -2,8 +2,8 @@
 
 **Package:** dist/copilot/
 **Version:** 5.0.0
-**Commands:** 16 (hsd-pm-new ... hsd-qa-review)
-**Format:** copilot-instructions.md
+**Commands:** 15 (hsd-pm-new ... hsd-qa-review)
+**Format:** prompt.md
 **Install to:** .github/prompts/
 
 ## Slash Commands
