@@ -9,7 +9,7 @@ para o formato nativo que o loader do runtime espera.
 |---|---|---|---|
 | Hermes | `hermes.js` | `convertHermesMarkdown` | CLAUDE.md→HERMES.md, .claude/→.hermes/, gsd:→gsd-, horus-sdk-hermes injection |
 | Claude | `claude.js` | `convertClaudeMarkdown` | Colon→hyphen, vendor paths neutralized, subagent neutralization |
-| Codex | `codex.js` | `convertCodexMarkdown` | $ARGUMENTS→{{GSD_ARGS}}, /clear removal, .claude→.codex, .claudeignore→.codexignore |
+| Codex | `codex.js` | `convertCodexMarkdown` | $ARGUMENTS→{{GSD_ARGS}}, /clear removal, .claude→.codex, .claudeignore→.codexignore, horus-sdk-codex block |
 | Copilot | `copilot.js` | `convertCopilotContent` | Tool name mapping (Read→read, etc.), gsd:→gsd-, AGENTS.md→copilot-instructions.md |
 | Gemini | `gemini.js` | `convertGeminiMarkdown` | .claude→.gemini, CLAUDE.md→GEMINI.md, gsd:→gsd- |
 
@@ -33,6 +33,7 @@ Ordem:
 5. Vendor paths: `~/.claude/gsd-core/workflows/` → `~/.codex/skills/`
 6. Runtime paths: `~/.claude/` → `~/.codex/`
 7. `.claudeignore` → `.codexignore`
+8. Prompts Codex gerados pelo builder recebem `<horus_sdk_adapter runtime="codex">` com o comando `node ~/.codex/skills/horus-sdk-codex/index.cjs <verb> [args] --cwd .`
 
 ## Copilot converter (detalhado)
 

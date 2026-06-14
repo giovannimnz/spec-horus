@@ -29,17 +29,17 @@ modules/gsd-core/  (upstream, submodule)
    │   ├── install.sh
    │   └── README.md
    ├── codex/       ← OpenAI Codex
-   │   ├── prompts/             16 prompt.md (1 por subcomando)
+   │   ├── prompts/             15 prompt.md (1 por subcomando)
    │   ├── agents/              hsd-*-agent.md (3)
    │   ├── install.sh
    │   └── README.md
    ├── gemini/      ← Google Gemini CLI
-   │   ├── commands/hsd/        16 .toml (1 por subcomando)
+   │   ├── commands/hsd/        15 .toml (1 por subcomando)
    │   ├── agents/              hsd-*-agent.toml (3)
    │   ├── install.sh
    │   └── README.md
    └── copilot/     ← GitHub Copilot
-       ├── prompts/             16 copilot-instructions.md
+       ├── prompts/             15 copilot-instructions.md
        ├── agents/              hsd-*-agent.md (3)
        ├── install.sh
        └── README.md
@@ -64,11 +64,11 @@ node bin/builder.js --runtime=gemini   # Só Gemini
 |---|---|---|---|
 | **Hermes** | 4 SKILL.md | YAML frontmatter + nested dirs | `$ARGUMENTS[0]` dentro do body |
 | **Claude Code** | 4 SKILL.md | YAML frontmatter + flat dirs | `$ARGUMENTS[0]` dentro do body |
-| **Codex CLI** | 16 prompt.md | Template vars (`{{GSD_ARGS}}`) | 1 arquivo por subcomando |
-| **Gemini CLI** | 16 .toml | TOML key=value | 1 arquivo por subcomando |
-| **GitHub Copilot** | 16 .md | copilot-instructions.md | 1 arquivo por subcomando |
+| **Codex CLI** | 15 prompt.md + horus-sdk-codex | Template vars (`{{GSD_ARGS}}`) | 1 arquivo por subcomando |
+| **Gemini CLI** | 15 .toml | TOML key=value | 1 arquivo por subcomando |
+| **GitHub Copilot** | 15 .md | copilot-instructions.md | 1 arquivo por subcomando |
 
-**Por que 4 no Hermes e 16 nos outros?**
+**Por que 4 no Hermes/Claude e 15 nos outros?**
 - Hermes e Claude Code suportam `$ARGUMENTS[0]` — o skill recebe o subcomando como argumento e faz roteamento interno
 - Codex, Gemini e Copilot **não** suportam esse mecanismo — precisam de 1 arquivo físico por subcomando
 
@@ -81,9 +81,9 @@ Cada runtime recebe 3 agentes especializados:
 
 **Ferramentas (idênticas para todos):** read_file, write_file, terminal, search_files, delegate_task
 
-### 4. Adapter (Hermes Only)
+### 4. SDK Adapter por runtime
 
-Apenas o Hermes recebe o `horus-sdk-hermes` (31 verbos + `graphifyy.py`). Os outros runtimes usam seus próprios SDKs nativos (Claude: `Agent()`, Codex: `delegate`, etc.).
+Hermes recebe `horus-sdk-hermes` e Codex recebe `horus-sdk-codex`. Cada SDK fica em `dist/<runtime>/adapter/` e é instalado no home do runtime (`~/.hermes/skills/hsd/horus-sdk-hermes/` ou `~/.codex/skills/horus-sdk-codex/`). Claude/Gemini/Copilot continuam sem SDK dedicado nesta milestone.
 
 ### 5. Content Converters
 
@@ -181,7 +181,7 @@ bash dist/hermes/install.sh
          ▼
   ┌──────────────────────────────────────────┐
   │  dist/{hermes,claude,codex,gemini,copilot}│
-  │  93 arquivos no total, 5 pacotes         │
+  │  108 arquivos no total, 5 pacotes        │
   └──────────────────────────────────────────┘
          │
          ▼  dist/<runtime>/install.sh
@@ -204,7 +204,7 @@ bash dist/hermes/install.sh
 | **Self-contained** | Cada `install.sh` detecta seu próprio diretório via `SCRIPT_DIR` |
 | **Upstream filter** | Comandos com níveis > ultra (wenyan-*, extreme-*) são removidos automaticamente |
 | **Agentes por role** | 3 agentes com mesmo toolset, especialidades diferentes |
-| **Adapter Hermes-only** | Só o Hermes precisa do horus-sdk-hermes; outros usam SDKs nativos |
+| **SDK por runtime** | Hermes usa horus-sdk-hermes; Codex usa horus-sdk-codex; evitar adapter genérico |
 
 ---
 

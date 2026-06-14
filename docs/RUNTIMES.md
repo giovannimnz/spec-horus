@@ -8,7 +8,7 @@ Matriz de onde Spec-Horus instala, em qual formato, pra cada CLI.
 |---|---|---|---|---|---|---|---|---|
 | **Hermes Agent** | `~/.hermes/` | — | `skills/` | (via skills) | `agents/` | `SKILL.md` | — | `<name>.md` |
 | **Claude Code** | `~/.claude/` | `./.claude/` | `skills/<name>/` | `commands/` | `agents/` | `SKILL.md` | `<name>.md` | `<name>.md` |
-| **Codex CLI** | `~/.codex/` | `./.codex/` | (converte p/ prompts) | `prompts/` | `agents/` | — | `<name>.md` | `<name>.md` (TBD `.toml`) |
+| **Codex CLI** | `~/.codex/` | `./.codex/` | `skills/horus-sdk-codex/` | `prompts/` | `agents/` | SDK `SKILL.md` | `<name>.md` | `<name>.md` |
 | **Gemini CLI** | `~/.gemini/` | `./.gemini/` | `skills/<name>/` | `commands/` | — | `SKILL.md` | `<name>.toml` (TBD) | — |
 | **GitHub Copilot** | — | `./.github/` | — | `prompts/` | `agents/` | — | `<name>.prompt.md` | `<name>.agent.md` |
 
@@ -66,8 +66,7 @@ project root é o project instructions file.
 TOML pra agents, mas o upstream gsd-core gera `.md`. Spec-Horus copia
 como `.md` por enquanto e warns sobre conversão manual.
 
-**Skills**: Codex não tem convention `skills/`. Spec-Horus converte
-`gsd-core/commands/gsd/*.md` em `codex/prompts/<name>.md`.
+**Skills/SDK**: Spec-Horus instala `horus-sdk-codex` em `<base>/skills/horus-sdk-codex/`. Os comandos de usuário continuam em `<base>/prompts/<name>.md`; o SDK é a camada operacional para ler/escrever `.planning/` via Node.
 
 ### Gemini CLI
 
@@ -127,7 +126,7 @@ commands/*.md em prompts/<name>.prompt.md.
 |---|---|---|---|---|---|
 | `commands/gsd-foo.md` | `skills/shd-foo/SKILL.md` | `commands/shd-foo.md` | `prompts/shd-foo.md` | `commands/shd-foo.toml` ⚠ | `prompts/shd-foo.prompt.md` |
 | `agents/gsd-bar.md` | `agents/gsd-bar.md` | `agents/gsd-bar.md` | `agents/gsd-bar.md` ⚠ | (skip) | `agents/gsd-bar.agent.md` |
-| `skills/gsd-baz/SKILL.md` | `skills/gsd-baz/SKILL.md` | `skills/gsd-baz/SKILL.md` | (→ prompts) | `skills/gsd-baz/SKILL.md` | (→ prompts) |
+| `bin/lib/horus-sdk-codex/` | — | — | `skills/horus-sdk-codex/` | — | — |
 
 ⚠ = requer conversão manual no momento. Roadmap: TOML converter.
 

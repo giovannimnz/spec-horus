@@ -29,7 +29,7 @@
 
 ### Desenvolvimento Guiado por Especificações — Para Todo CLI
 
-**67 comandos upstream → 3 papéis + config. 4 arquivos (Hermes/Claude), 16 (Codex/Gemini/Copilot).**
+**67 comandos upstream → 3 papéis + config. 4 arquivos (Hermes/Claude), 15 (Codex/Gemini/Copilot).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-4.1.0-7c3aed)](package.json)
@@ -59,7 +59,7 @@ open-gsd/gsd-core (67 comandos)
   │                                  │
   │   📋 PM    ⚡ DEV    ✅ QA        │
   │   ┌──────────────────────────┐   │
-  │   │ horus-sdk-hermes (31)   │   │
+  │   │ horus-sdk-hermes/codex │   │
   │   │ Rebrand engine (157)     │   │
   │   │ Content converters (5)   │   │
   │   │ Frontmatter converters   │   │
@@ -69,7 +69,7 @@ open-gsd/gsd-core (67 comandos)
          │
          ▼
   Hermes  Claude  Codex  Gemini  Copilot
-  4 cmds  4 cmds  16 cmd  16 cmd  16 cmd
+  4 cmds  4 cmds  15 cmd  15 cmd  15 cmd
 ```
 
 ---
@@ -187,9 +187,9 @@ Ativados automaticamente ao usar o slash command correspondente. Roteamento inte
 |---|---|---|---|
 | **Hermes** | `/hsd-pm` `/hsd-dev` `/hsd-qa` `/hsd-config` (4) | SKILL.md nested | `$ARGUMENTS[0]` |
 | **Claude Code** | `/hsd-pm` `/hsd-dev` `/hsd-qa` `/hsd-config` (4) | SKILL.md flat | `$ARGUMENTS[0]` |
-| **Codex CLI** | `hsd-pm-new` ... `hsd-qa-review` (16) | prompt.md | 1 arquivo/subcomando |
-| **Gemini CLI** | `/hsd-pm:new` ... `/hsd-qa:review` (16) | .toml | 1 arquivo/subcomando |
-| **GitHub Copilot** | `hsd-pm-new` ... `hsd-qa-review` (16) | .md | 1 arquivo/subcomando |
+| **Codex CLI** | `hsd-pm-new` ... `hsd-qa-review` (15) + SDK | prompt.md + horus-sdk-codex | 1 arquivo/subcomando |
+| **Gemini CLI** | `/hsd-pm:new` ... `/hsd-qa:review` (15) | .toml | 1 arquivo/subcomando |
+| **GitHub Copilot** | `hsd-pm-new` ... `hsd-qa-review` (15) | .md | 1 arquivo/subcomando |
 
 ---
 
@@ -201,13 +201,13 @@ Cada CLI tem sua própria pasta em `dist/` com **tudo personalizado**:
 dist/
 ├── hermes/      skills + agents + horus-sdk-hermes + install.sh
 ├── claude/      skills + agents + install.sh
-├── codex/       prompts (16) + agents + install.sh
-├── gemini/      commands (16 .toml) + agents + install.sh
-└── copilot/     prompts (16) + agents + install.sh
+├── codex/       prompts (15) + agents + horus-sdk-codex + install.sh
+├── gemini/      commands (15 .toml) + agents + install.sh
+└── copilot/     prompts (15) + agents + install.sh
 ```
 
 **Gerado por:** `node bin/builder.js --all`  
-**Total:** 93 arquivos, 5 pacotes independentes  
+**Total:** 108+ arquivos, 5 pacotes independentes
 
 ---
 
@@ -217,17 +217,22 @@ dist/
 git clone --recurse-submodules https://github.com/giovannimnz/horus-spec-driven.git
 cd horus-spec-driven
 
-# Build + Install
-node bin/builder.js --all
-bash dist/hermes/install.sh      # Hermes Agent
-bash dist/claude/install.sh      # Claude Code
-bash dist/codex/install.sh       # Codex CLI
-bash dist/gemini/install.sh      # Gemini CLI
-bash dist/copilot/install.sh     # GitHub Copilot
+# Build unificado (93 files, 5 runtimes)
+npm run build                       # ou: node bin/builder.js --all
 
-# Sync diário
-pm2 start ecosystem.daily-sync.cron.json
-node bin/install.js language en      # English
+# Build de um runtime específico
+npm run build:hermes                # ou: node bin/builder.js --runtime=hermes
+npm run build:claude                # etc.
+
+# Install em cada CLI
+bash dist/hermes/install.sh        # Hermes Agent
+bash dist/claude/install.sh        # Claude Code
+bash dist/codex/install.sh         # Codex CLI
+bash dist/gemini/install.sh        # Gemini CLI
+bash dist/copilot/install.sh       # GitHub Copilot
+
+# Alternativa: install via wrapper Node (auto-detect runtime)
+npm run install                     # ou: node bin/install.js install --all --global
 
 # Sync diário
 pm2 start ecosystem.daily-sync.cron.json

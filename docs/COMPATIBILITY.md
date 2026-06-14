@@ -44,9 +44,9 @@
 |---|---|---|---|---|
 | **Hermes** | 4 SKILL.md (nested) | 4 | YAML frontmatter | `$ARGUMENTS[0]` dentro do body |
 | **Claude Code** | 4 SKILL.md (flat) | 4 | YAML frontmatter | `$ARGUMENTS[0]` dentro do body |
-| **Codex CLI** | 16 prompt.md (flat) | 16 | Template vars | Um arquivo por subcomando |
-| **Gemini CLI** | 16 .toml (flat) | 16 | TOML | Um arquivo por subcomando |
-| **GitHub Copilot** | 16 .md (flat) | 16 | copilot-instructions.md | Um arquivo por subcomando |
+| **Codex CLI** | 15 prompt.md + horus-sdk-codex | 15 + SDK | Template vars | Um arquivo por subcomando + SDK operacional |
+| **Gemini CLI** | 15 .toml (flat) | 15 | TOML | Um arquivo por subcomando |
+| **GitHub Copilot** | 15 .md (flat) | 15 | copilot-instructions.md | Um arquivo por subcomando |
 
 ---
 
@@ -57,8 +57,8 @@
 | Content converter | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Frontmatter converter | ✅ | ✅ | ✅ | ✅ | ✅ |
 | "Explode" subcomandos | — | — | ⬜ | ⬜ | ⬜ |
-| Install funcional | ✅ | ✅ | ⬜ | ⬜ | ⬜ |
-| horus-sdk-hermes | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Install funcional | ✅ | ✅ | ✅ | ⬜ | ⬜ |
+| horus-sdk-<runtime> | ✅ horus-sdk-hermes | ❌ | ✅ horus-sdk-codex | ❌ | ❌ |
 | graphify (Python) | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 **"Explode" subcomandos** é a fase que converte 1 SKILL.md com N subcomandos em N arquivos planos (`.toml`, `prompt.md`, etc.). Implementado apenas para Hermes e Claude (que suportam `$ARGUMENTS[0]`). Codex, Gemini e Copilot precisam desse passo extra.

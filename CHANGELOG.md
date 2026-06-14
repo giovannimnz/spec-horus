@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — 2026-06-13
+
+### horus-sdk-codex
+
+- Adicionado `bin/lib/horus-sdk-codex/` como SDK HSD específico para Codex.
+- `bin/builder.js --runtime=codex` agora emite `dist/codex/adapter/`.
+- `dist/codex/install.sh` instala prompts, agents e `~/.codex/skills/horus-sdk-codex/` usando `SCRIPT_DIR` self-contained.
+- Smoke tests cobrem builder Codex, install com `CODEX_HOME` temporário e verbos críticos do SDK Codex.
+
 ## v5.0.0 — 2026-06-05
 
 ### dist/ por Runtime com Builder Único (BREAKING)
@@ -7,10 +16,10 @@
 - Cada CLI recebe sua própria pasta em `dist/<runtime>/` com tudo self-contained:
   - `dist/hermes/` — 4 SKILL.md nested + agents/ + horus-sdk-hermes + install.sh (24 files)
   - `dist/claude/` — 4 SKILL.md flat + agents/ + install.sh (9 files)
-  - `dist/codex/` — 16 prompts/ + agents/ + install.sh (20 files)
-  - `dist/gemini/` — 16 commands .toml + agents/ + install.sh (20 files)
-  - `dist/copilot/` — 16 prompts/ + agents/ + install.sh (20 files)
-- **Total: 93 arquivos, 5 pacotes independentes** gerados por `node bin/builder.js --all`
+  - `dist/codex/` — 15 prompts/ + agents/ + horus-sdk-codex + install.sh (35 files)
+  - `dist/gemini/` — 15 commands .toml + agents/ + install.sh (20 files)
+  - `dist/copilot/` — 15 prompts/ + agents/ + install.sh (20 files)
+- **Total: 108 arquivos, 5 pacotes independentes** gerados por `node bin/builder.js --all`
 - Builder único (`bin/builder.js`) aplica uma vez: rebrand → content converters → frontmatter converters → subagent adapter → i18n
 - `dist/` é gerado, nunca editado manualmente — commitado no repo pra release
 - Cada `dist/<runtime>/install.sh` é self-contained: `SCRIPT_DIR` resolve paths relativos, roda sem o repo inteiro
@@ -38,7 +47,7 @@
 - PO eliminado → atividades movidas para PM (new, track) e DEV (discover, define)
 - Frontend + Backend eliminados → fundidos no DEV (ui, debug, maintain)
 - 3 papéis + config: DEV (7 subcomandos), PM (5), QA (3)
-- 4 arquivos (Hermes/Claude) vs 16 (Codex/Gemini/Copilot)
+- 4 arquivos (Hermes/Claude) vs 15 (Codex/Gemini/Copilot)
 - rebrand.js: 67→3 mapping
 - Gemini CLI: formato `role:subcommand` (/hsd-dev:discover, /hsd-pm:track)
 

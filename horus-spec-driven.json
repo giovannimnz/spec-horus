@@ -1,7 +1,7 @@
 {
   "project": "horus-spec-driven",
   "version": "4.0.0",
-  "description": "Multi-CLI wrapper for gsd-core — 67 commands → 3 roles + config, 4-16 commands per runtime",
+  "description": "Multi-CLI wrapper for gsd-core — 67 commands → 3 roles + config, 4-15 commands per runtime",
   "locale": {
     "code": "pt",
     "available": [
@@ -36,8 +36,8 @@
   },
   "unified": {
     "prefix": "hsd",
-    "reduction": "67 → 4-16 (conforme runtime)",
-    "explanation": "Hermes/Claude: 4 skills com $ARGUMENTS[0]. Codex/Gemini/Copilot: 16 comandos planos (1 por subcomando).",
+    "reduction": "67 → 4-15 (conforme runtime)",
+    "explanation": "Hermes/Claude: 4 skills com $ARGUMENTS[0]. Codex/Gemini/Copilot: 15 comandos planos (1 por subcomando).",
     "roles": {
       "dev": {
         "name": "Developer",
@@ -59,7 +59,7 @@
   "branding": {
     "project": "Horus Spec Driven",
     "acronym": "hsd",
-    "tagline": "Spec-Driven Development — 3 roles, 4-16 commands, 5 platforms"
+    "tagline": "Spec-Driven Development — 3 roles, 4-15 commands, 5 platforms"
   },
   "last_install": {
     "runtimes": [

@@ -18,16 +18,14 @@ node bin/install.js install --all --global
 
 ```bash
 node bin/install.js detect
-# → hermes claude codex gemini
+# → hermes claude codex gemini copilot
 
 ls ~/.hermes/skills/hsd/
-# → hsd-po-discover  hsd-po-new  hsd-po-define  hsd-po-inbox
-# → hsd-pm-plan      hsd-pm-exec hsd-pm-track   hsd-pm-config
-# → hsd-pm-ship      hsd-pm-manage
-# → hsd-front-ui
-# → hsd-back-debug   hsd-back-maintain  hsd-back-context
-# → hsd-qa-validate  hsd-qa-audit  hsd-qa-review
-# → horus-sdk-hermes
+# → hsd-pm      (5 subcomandos: new, track, ship, config, manage)
+# → hsd-dev     (7 subcomandos: discover, define, plan, build, debug, maintain, ui)
+# → hsd-qa      (3 subcomandos: validate, audit, review)
+# → hsd-config  (language/compression/agents)
+# → horus-sdk-hermes/
 ```
 
 ## 3. Daily Sync
@@ -44,8 +42,11 @@ pm2 save
 ## 4. Test
 
 ```bash
-# Test adapter
+# Test Hermes SDK
 node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs state load --cwd /path/to/project
+
+# Test Codex SDK
+node ~/.codex/skills/horus-sdk-codex/index.cjs roadmap analyze --cwd /path/to/project
 
 # Test graphify (code-aware knowledge graph)
 node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify build --cwd /path/to/project
@@ -61,28 +62,16 @@ node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify query "function" -
 | **Git** | Vendor pull from open-gsd/gsd-core |
 | **PM2** | Auto-sync cron (optional) |
 
-## Layout
+## Layout (v4.1+)
 
 ### Hermes
+
 ```
 ~/.hermes/skills/hsd/
-├── hsd-po-discover/SKILL.md
-├── hsd-po-new/SKILL.md
-├── hsd-po-define/SKILL.md
-├── hsd-po-inbox/SKILL.md
-├── hsd-pm-plan/SKILL.md
-├── hsd-pm-exec/SKILL.md
-├── hsd-pm-track/SKILL.md
-├── hsd-pm-config/SKILL.md
-├── hsd-pm-ship/SKILL.md
-├── hsd-pm-manage/SKILL.md
-├── hsd-front-ui/SKILL.md
-├── hsd-back-debug/SKILL.md
-├── hsd-back-maintain/SKILL.md
-├── hsd-back-context/SKILL.md
-├── hsd-qa-validate/SKILL.md
-├── hsd-qa-audit/SKILL.md
-├── hsd-qa-review/SKILL.md
+├── hsd-pm/SKILL.md          (5 subcomandos: new, track, ship, config, manage)
+├── hsd-dev/SKILL.md         (7 subcomandos: discover, define, plan, build, debug, maintain, ui)
+├── hsd-qa/SKILL.md          (3 subcomandos: validate, audit, review)
+├── hsd-config/SKILL.md      (language/compression/agents)
 └── horus-sdk-hermes/
     ├── index.cjs
     ├── state.cjs
@@ -92,33 +81,59 @@ node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs graphify query "function" -
 ```
 
 ### Claude Code
+
 ```
 ~/.claude/skills/
-├── hsd-po-discover/SKILL.md
-├── hsd-pm-plan/SKILL.md
-└── ...
+├── hsd-pm/SKILL.md
+├── hsd-dev/SKILL.md
+├── hsd-qa/SKILL.md
+└── hsd-config/SKILL.md
 ```
 
 ### Codex
+
 ```
-~/.codex/prompts/
-├── hsd-po-discover.md
-├── hsd-pm-plan.md
-└── ...
+~/.codex/
+├── prompts/
+│   ├── hsd-pm-new.md
+│   ├── hsd-dev-discover.md
+│   ├── hsd-qa-validate.md
+│   └── ...  (15 total: 5 PM + 7 DEV + 3 QA)
+├── agents/
+│   └── hsd-dev-agent.md
+└── skills/horus-sdk-codex/
+    ├── index.cjs
+    └── ...
 ```
 
 ### Gemini
+
 ```
 ~/.gemini/commands/hsd/
-├── hsd-po-discover.toml
-├── hsd-pm-plan.toml
-└── ...
+├── hsd-pm:new.toml
+├── hsd-dev:discover.toml
+├── hsd-qa:validate.toml
+└── ...  (15 total)
 ```
 
 ### Copilot
+
 ```
 .github/prompts/
-├── hsd-po-discover.md
-├── hsd-pm-plan.md
-└── ...
+├── hsd-pm-new.md
+├── hsd-dev-discover.md
+├── hsd-qa-validate.md
+└── ...  (15 total)
 ```
+
+## Local Skills (v5.1+, omni-spec-driven only)
+
+**Esta seção refere-se ao projeto sucessor [`omni-spec-driven`](https://github.com/giovannimnz/omni-spec-driven), não a este repo legacy.**
+
+A partir do v5.1, o `omni-spec-driven` introduziu um hook de auto-instalação de skills locais:
+
+- Coloque `SKILL.md` em `modules/skills/<name>/SKILL.md` no repo
+- O `bin/install.js` detecta e instala em `~/.hermes/skills/hsd/<name>/`
+- Não é necessário mexer no wordlist ou rebrand
+
+Este hook **não foi portado** para `horus-spec-driven` (decisão D-1.1 — legacy estável). Para usar skills locais, migre para o projeto sucessor ou aplique o hook manualmente.

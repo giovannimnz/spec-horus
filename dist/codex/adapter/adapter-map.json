@@ -1,0 +1,115 @@
+{
+  "description": "Registry mapping gsd-tools.cjs verbs → horus-spec-driven adapter modules",
+  "source": "docs/GSD-SDK-MAPPING.md",
+  "categories": {
+    "state": {
+      "verbs": ["state", "init", "state-snapshot", "summary-extract", "state-snapshot", "history-digest"],
+      "module": "state.js",
+      "level": "A"
+    },
+    "config": {
+      "verbs": ["config-get", "config-set", "config-set-model-profile", "config-new-project", "config-ensure-section", "config-path", "migrate-config"],
+      "module": "config.js",
+      "level": "A"
+    },
+    "commit": {
+      "verbs": ["commit", "commit-to-subrepo", "check-commit"],
+      "module": "commit.js",
+      "level": "A"
+    },
+    "frontmatter": {
+      "verbs": ["frontmatter.get", "frontmatter.set", "frontmatter.merge", "frontmatter.validate"],
+      "module": "frontmatter.js",
+      "level": "A"
+    },
+    "roadmap": {
+      "verbs": ["roadmap", "phase", "phase-plan-index", "phase.mvp-mode"],
+      "module": "roadmap.js",
+      "level": "A"
+    },
+    "validate": {
+      "verbs": ["validate", "audit-uat", "audit-open", "uat"],
+      "module": "validate.js",
+      "level": "A"
+    },
+    "workstream": {
+      "verbs": ["workstream"],
+      "module": "workstream.js",
+      "level": "B"
+    },
+    "graphify": {
+      "verbs": ["graphify"],
+      "module": null,
+      "level": "C",
+      "note": "Not supported outside Claude Code. Skill body gets a warning."
+    },
+    "scaffold": {
+      "verbs": ["scaffold", "docs-init"],
+      "module": "scaffold.js",
+      "level": "A"
+    },
+    "milestone": {
+      "verbs": ["milestone", "requirements"],
+      "module": "milestone.js",
+      "level": "A"
+    },
+    "misc": {
+      "verbs": ["list-todos", "verify-path-exists", "verify-summary", "websearch", "gap-analysis", "generate-slug", "current-timestamp", "learnings", "from-gsd2", "prompt-budget", "update-context", "effort"],
+      "module": "misc.js",
+      "level": "A"
+    },
+    "resolve": {
+      "verbs": ["resolve-model", "resolve-granularity", "resolve-execution", "progress"],
+      "module": "resolve.js",
+      "level": "A"
+    },
+    "agent-skills": {
+      "verbs": ["agent-skills", "skill-manifest"],
+      "module": null,
+      "level": "B",
+      "note": "Delegated to runtime's native subagent primitive. Hermes: skill_view, Claude: Task, Codex: delegate_task, Copilot: agent"
+    }
+  },
+  "runtimeEquivalents": {
+    "hermes": {
+      "readFile": "read_file(path)",
+      "writeFile": "write_file(path, content)",
+      "searchFiles": "search_files(pattern, path, target='content'|'files')",
+      "patch": "patch(path, old_string, new_string)",
+      "terminal": "terminal(command)",
+      "delegateTask": "delegate_task(goal=, toolsets=['terminal','file','web'])",
+      "skillView": "skill_view(name='skill-name')"
+    },
+    "claude": {
+      "readFile": "Read tool",
+      "writeFile": "Write tool",
+      "edit": "Edit tool",
+      "bash": "Bash tool",
+      "grep": "Grep tool",
+      "glob": "Glob tool",
+      "task": "Task tool with subagent_type",
+      "slashCommand": "SlashCommand tool"
+    },
+    "codex": {
+      "readFile": "read",
+      "writeFile": "edit",
+      "execute": "execute",
+      "search": "search",
+      "delegateTask": "delegate_task(goal=, toolsets=...)"
+    },
+    "gemini": {
+      "readFile": "read_file",
+      "writeFile": "write_file",
+      "replace": "replace",
+      "grep": "grep_search",
+      "shell": "run_shell_command"
+    },
+    "copilot": {
+      "readFile": "read",
+      "writeFile": "edit",
+      "execute": "execute",
+      "search": "search",
+      "agent": "agent custom agent invoke"
+    }
+  }
+}

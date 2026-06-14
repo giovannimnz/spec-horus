@@ -1,0 +1,25 @@
+{
+  "built": "2026-06-06T09:22:29Z",
+  "version": "2.1.0",
+  "storage": "file",
+  "tier_description": "File-based graphifyy (Python stdlib)",
+  "nodes": [
+    {
+      "id": "Phase-1",
+      "label": "fixture bootstrap",
+      "type": "phase",
+      "description": "Phase 1",
+      "source_file": ".planning/ROADMAP.md"
+    }
+  ],
+  "edges": [],
+  "stats": {
+    "nodeCount": 1,
+    "edgeCount": 0,
+    "filesScanned": 1,
+    "elapsedMs": 2
+  },
+  "byType": {
+    "phase": 1
+  }
+}

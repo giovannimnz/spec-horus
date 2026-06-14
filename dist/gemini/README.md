@@ -2,7 +2,7 @@
 
 **Package:** dist/gemini/
 **Version:** 5.0.0
-**Commands:** 16 (/hsd-pm:new ... /hsd-qa:review)
+**Commands:** 15 (/hsd-pm:new ... /hsd-qa:review)
 **Format:** .toml
 **Install to:** ~/.gemini/commands/hsd/
 

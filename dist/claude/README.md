@@ -3,7 +3,7 @@
 **Package:** dist/claude/
 **Version:** 5.0.0
 **Commands:** 4 (/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config)
-**Format:** SKILL.md (flat)
+**Format:** SKILL.md (nested dirs under skills/hsd/)
 **Install to:** ~/.claude/skills/
 
 ## Slash Commands

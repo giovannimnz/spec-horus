@@ -13,7 +13,7 @@
  * Outputs to dist/<runtime>/:
  *   skills/   — runtime-native skill files
  *   agents/   — agent definition files
- *   adapter/  — horus-sdk-hermes (Hermes only)
+ *   adapter/  — horus-sdk-<runtime> (Hermes and Codex)
  *   install.sh — runtime-specific installer
  *   README.md — runtime-specific documentation
  *
@@ -33,7 +33,10 @@ const DIST = path.join(ROOT, 'dist');
 const WORDLIST_PATH = path.join(ROOT, 'modules', 'unified-wordlist.json');
 const CONFIG_PATH = path.join(ROOT, 'horus-spec-driven.json');
 const LOCALES_DIR = path.join(ROOT, 'locales');
-const ADAPTER_SRC = path.join(ROOT, 'bin', 'lib', 'horus-sdk-hermes');
+const ADAPTER_SOURCES = {
+  hermes: path.join(ROOT, 'bin', 'lib', 'horus-sdk-hermes'),
+  codex: path.join(ROOT, 'bin', 'lib', 'horus-sdk-codex'),
+};
 
 // ─── Load config ───────────────────────────────────────────────────────────
 
@@ -214,6 +217,18 @@ ${pt ? '**Uso:**' : '**Usage:**'} \`/${unifiedName} [args]\`
   }
 
   // Codex/Copilot: markdown
+  const adapterBlock = runtime === 'codex' ? `
+---
+
+<horus_sdk_adapter runtime="codex">
+${pt ? '**horus-sdk-codex** gerencia operações GSD/HSD internas no Codex.' : '**horus-sdk-codex** handles internal GSD/HSD operations in Codex.'}
+\`node ~/.codex/skills/horus-sdk-codex/index.cjs <verb> [args] --cwd .\`
+
+${pt ? 'Use este SDK antes de improvisar chamadas ao gsd-tools.cjs, Hermes ou Claude.' : 'Use this SDK before improvising gsd-tools.cjs, Hermes, or Claude calls.'}
+</horus_sdk_adapter>
+
+---` : '---';
+
   return `---
 name: ${unifiedName}
 description: "${ROLES[role].icon} ${roleName}: ${sub.cmd}"
@@ -239,7 +254,7 @@ ${pt ? 'Mapeia de (gsd-core):' : 'Maps from (gsd-core):'} ${mapsList}...
 /${unifiedName} [args]
 \`\`\`
 
----
+${adapterBlock}
 
 *Horus Spec Driven v5.0 — dist/${runtime}*
 `;
@@ -361,60 +376,76 @@ metadata:
 
 function buildInstallScript(runtime) {
   const hermesHome = '${HERMES_HOME:-$HOME/.hermes}';
-  const claudeHome = '${HOME}/.claude';
-  const codexHome = '${HOME}/.codex';
-  const geminiHome = '${HOME}/.gemini';
+  const claudeHome = '${CLAUDE_CONFIG_DIR:-$HOME/.claude}';
+  const codexHome = '${CODEX_HOME:-$HOME/.codex}';
+  const geminiHome = '${GEMINI_CONFIG_DIR:-$HOME/.gemini}';
   const copilotDir = '${PWD}/.github';
+  const scriptDir = 'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"';
 
   const scripts = {
     hermes: `#!/usr/bin/env bash
 # Horus Spec Driven — Hermes Agent Installer v5.0
 set -euo pipefail
+${scriptDir}
 HD=${hermesHome}/skills/hsd
 AD=${hermesHome}/agents
 echo "Installing HSD v5.0 for Hermes Agent..."
-mkdir -p "$HD" "$AD"
-cp -r dist/hermes/skills/hsd/* "$HD/"
-cp dist/hermes/agents/*.md "$AD/" 2>/dev/null || true
-cp -r dist/hermes/adapter/* "$HD/horus-sdk-hermes/" 2>/dev/null || true
-echo "✓ $(ls "$HD" | wc -l) skills + agents installed"
+mkdir -p "$HD" "$AD" "$HD/horus-sdk-hermes"
+cp -r "$SCRIPT_DIR"/skills/hsd/* "$HD/"
+cp "$SCRIPT_DIR"/agents/*.md "$AD/" 2>/dev/null || true
+cp -r "$SCRIPT_DIR"/adapter/* "$HD/horus-sdk-hermes/" 2>/dev/null || true
+echo "✓ $(find "$HD" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l) skills + agents installed"
 echo "  Restart Hermes or run /reload_skills"
 `,
     claude: `#!/usr/bin/env bash
 # Horus Spec Driven — Claude Code Installer v5.0
 set -euo pipefail
+${scriptDir}
 SD=${claudeHome}/skills
+AD=${claudeHome}/agents
 echo "Installing HSD v5.0 for Claude Code..."
-mkdir -p "$SD"
-cp dist/claude/skills/*.md "$SD/"
-echo "✓ $(ls dist/claude/skills/ | wc -l) skills installed"
+mkdir -p "$SD" "$AD"
+cp -r "$SCRIPT_DIR"/skills/hsd/* "$SD/"
+cp "$SCRIPT_DIR"/agents/*.md "$AD/" 2>/dev/null || true
+echo "✓ $(find "$SCRIPT_DIR"/skills/hsd -mindepth 1 -maxdepth 1 -type d | wc -l) skills installed"
 `,
     codex: `#!/usr/bin/env bash
 # Horus Spec Driven — Codex CLI Installer v5.0
 set -euo pipefail
+${scriptDir}
 PD=${codexHome}/prompts
+AD=${codexHome}/agents
+SD=${codexHome}/skills/horus-sdk-codex
 echo "Installing HSD v5.0 for Codex CLI..."
-mkdir -p "$PD"
-cp dist/codex/prompts/*.md "$PD/"
-echo "✓ $(ls dist/codex/prompts/ | wc -l) prompts installed"
+mkdir -p "$PD" "$AD" "$SD"
+cp "$SCRIPT_DIR"/prompts/*.md "$PD/"
+cp "$SCRIPT_DIR"/agents/*.md "$AD/" 2>/dev/null || true
+cp -r "$SCRIPT_DIR"/adapter/* "$SD/"
+echo "✓ $(ls "$SCRIPT_DIR"/prompts/ | wc -l) prompts + $(ls "$SCRIPT_DIR"/agents/ | wc -l) agents + horus-sdk-codex installed"
 `,
     gemini: `#!/usr/bin/env bash
 # Horus Spec Driven — Gemini CLI Installer v5.0
 set -euo pipefail
+${scriptDir}
 CD=${geminiHome}/commands/hsd
+AD=${geminiHome}/agents
 echo "Installing HSD v5.0 for Gemini CLI..."
-mkdir -p "$CD"
-cp dist/gemini/commands/hsd/*.toml "$CD/"
-echo "✓ $(ls dist/gemini/commands/hsd/ | wc -l) commands installed"
+mkdir -p "$CD" "$AD"
+cp "$SCRIPT_DIR"/commands/hsd/*.toml "$CD/"
+cp "$SCRIPT_DIR"/agents/*.toml "$AD/" 2>/dev/null || true
+echo "✓ $(ls "$SCRIPT_DIR"/commands/hsd/ | wc -l) commands installed"
 `,
     copilot: `#!/usr/bin/env bash
 # Horus Spec Driven — GitHub Copilot Installer v5.0
 set -euo pipefail
+${scriptDir}
 PD=${copilotDir}/prompts
+AD=${copilotDir}/agents
 echo "Installing HSD v5.0 for GitHub Copilot..."
-mkdir -p "$PD"
-cp dist/copilot/prompts/*.md "$PD/"
-echo "✓ $(ls dist/copilot/prompts/ | wc -l) prompts installed"
+mkdir -p "$PD" "$AD"
+cp "$SCRIPT_DIR"/prompts/*.md "$PD/"
+cp "$SCRIPT_DIR"/agents/*.md "$AD/" 2>/dev/null || true
+echo "✓ $(ls "$SCRIPT_DIR"/prompts/ | wc -l) prompts installed"
 `,
   };
   return scripts[runtime] || scripts.hermes;
@@ -425,15 +456,17 @@ echo "✓ $(ls dist/copilot/prompts/ | wc -l) prompts installed"
 function buildRuntimeReadme(runtime) {
   const rt = {
     hermes: { name: 'Hermes Agent', dest: '~/.hermes/skills/hsd/', format: 'SKILL.md (nested)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
-    claude: { name: 'Claude Code', dest: '~/.claude/skills/', format: 'SKILL.md (flat)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
-    codex: { name: 'OpenAI Codex', dest: '~/.codex/prompts/', format: 'prompt.md', count: '16', cmds: 'hsd-pm-new ... hsd-qa-review' },
-    gemini: { name: 'Google Gemini CLI', dest: '~/.gemini/commands/hsd/', format: '.toml', count: '16', cmds: '/hsd-pm:new ... /hsd-qa:review' },
-    copilot: { name: 'GitHub Copilot', dest: '.github/prompts/', format: 'copilot-instructions.md', count: '16', cmds: 'hsd-pm-new ... hsd-qa-review' },
+    claude: { name: 'Claude Code', dest: '~/.claude/skills/', format: 'SKILL.md (nested dirs under skills/hsd/)', count: '4', cmds: '/hsd-pm, /hsd-dev, /hsd-qa, /hsd-config' },
+    codex: { name: 'OpenAI Codex', dest: '~/.codex/prompts/ + ~/.codex/skills/horus-sdk-codex/', format: 'prompt.md + horus-sdk-codex', count: '15', cmds: 'hsd-pm-new ... hsd-qa-review' },
+    gemini: { name: 'Google Gemini CLI', dest: '~/.gemini/commands/hsd/', format: '.toml', count: '15', cmds: '/hsd-pm:new ... /hsd-qa:review' },
+    copilot: { name: 'GitHub Copilot', dest: '.github/prompts/', format: 'prompt.md', count: '15', cmds: 'hsd-pm-new ... hsd-qa-review' },
   }[runtime] || { name: runtime, dest: '—', format: '—', count: '0', cmds: '' };
 
   const extraNotes = runtime === 'hermes'
     ? `\n## Adapter\n\nhorus-sdk-hermes incluído — 31 verbos, graphifyy.py (Python code-aware scanning).\n\n\`node ~/.hermes/skills/hsd/horus-sdk-hermes/index.cjs <verb> [args] --cwd .\``
-    : '';
+    : runtime === 'codex'
+      ? `\n## Adapter\n\nhorus-sdk-codex incluído — SDK Codex-native para operações GSD/HSD com .planning/.\n\n\`node ~/.codex/skills/horus-sdk-codex/index.cjs <verb> [args] --cwd .\``
+      : '';
 
   return `# Horus Spec Driven — ${rt.name}
 
@@ -530,10 +563,11 @@ function buildRuntime(runtime) {
     fs.writeFileSync(path.join(agentsDir, `hsd-${role}-agent${ext}`), buildAgentMd(role, runtime), 'utf8');
   }
 
-  // ── Adapter (Hermes only) ──────────────────────────────────────────────
-  if (runtime === 'hermes' && fs.existsSync(ADAPTER_SRC)) {
+  // ── Runtime SDK adapter ────────────────────────────────────────────────
+  const adapterSrc = ADAPTER_SOURCES[runtime];
+  if (adapterSrc && fs.existsSync(adapterSrc)) {
     const adapterDir = path.join(distDir, 'adapter');
-    fs.cpSync(ADAPTER_SRC, adapterDir, { recursive: true });
+    fs.cpSync(adapterSrc, adapterDir, { recursive: true });
   }
 
   // ── Install script ─────────────────────────────────────────────────────

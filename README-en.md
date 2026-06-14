@@ -29,7 +29,7 @@
 
 ### Spec-Driven Development for Every CLI
 
-**67 upstream commands → 3 roles + config. 4 files (Hermes/Claude), 16 (Codex/Gemini/Copilot).**
+**67 upstream commands → 3 roles + config. 4 files (Hermes/Claude), 15 (Codex/Gemini/Copilot).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-4.1.0-7c3aed)](package.json)
@@ -106,9 +106,9 @@
 |---|---|---|---|
 | **Hermes** | `/hsd-pm` `/hsd-dev` `/hsd-qa` `/hsd-config` (4) | SKILL.md nested | `$ARGUMENTS[0]` |
 | **Claude Code** | `/hsd-pm` `/hsd-dev` `/hsd-qa` `/hsd-config` (4) | SKILL.md flat | `$ARGUMENTS[0]` |
-| **Codex CLI** | `hsd-pm-new` ... `hsd-qa-review` (16) | prompt.md | 1 file/subcommand |
-| **Gemini CLI** | `/hsd-pm:new` ... `/hsd-qa:review` (16) | .toml | 1 file/subcommand |
-| **GitHub Copilot** | `hsd-pm-new` ... `hsd-qa-review` (16) | .md | 1 file/subcommand |
+| **Codex CLI** | `hsd-pm-new` ... `hsd-qa-review` (15) + SDK | prompt.md + horus-sdk-codex | 1 file/subcommand |
+| **Gemini CLI** | `/hsd-pm:new` ... `/hsd-qa:review` (15) | .toml | 1 file/subcommand |
+| **GitHub Copilot** | `hsd-pm-new` ... `hsd-qa-review` (15) | .md | 1 file/subcommand |
 
 ---
 

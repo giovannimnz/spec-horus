@@ -2,9 +2,9 @@
 
 **Package:** dist/codex/
 **Version:** 5.0.0
-**Commands:** 16 (hsd-pm-new ... hsd-qa-review)
-**Format:** prompt.md
-**Install to:** ~/.codex/prompts/
+**Commands:** 15 (hsd-pm-new ... hsd-qa-review)
+**Format:** prompt.md + horus-sdk-codex
+**Install to:** ~/.codex/prompts/ + ~/.codex/skills/horus-sdk-codex/
 
 ## Slash Commands
 
@@ -23,6 +23,11 @@
 | hsd-dev-agent | read, write, terminal, search, delegate |
 | hsd-qa-agent | read, write, terminal, search, delegate |
 
+## Adapter
+
+horus-sdk-codex incluído — SDK Codex-native para operações GSD/HSD com .planning/.
+
+`node ~/.codex/skills/horus-sdk-codex/index.cjs <verb> [args] --cwd .`
 ## Install
 
 ```bash
